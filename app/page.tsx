@@ -1,11 +1,8 @@
 import DefaultWrapper from "@/components/default-wrapper";
 import Hero from "@/components/hero";
-import { getUsers } from "@/db/queries/select";
+import { Button } from "@/components/ui/button";
 
 export default async function Index() {
-
-  await getUsers()
-  
   return (
     <DefaultWrapper>
       <Hero />
