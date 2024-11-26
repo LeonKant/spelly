@@ -1,10 +1,9 @@
-import DefaultWrapper from "@/components/default-wrapper";
-import Hero from "@/components/hero";
-import { Button } from "@/components/ui/button";
+import DefaultWrapper from "@/components/DefaultWrapper";
+import Hero from "@/components/Hero";
 
 export default async function Index() {
   return (
-    <DefaultWrapper>
+    <DefaultWrapper centerChildren>
       <Hero />
     </DefaultWrapper>
   );

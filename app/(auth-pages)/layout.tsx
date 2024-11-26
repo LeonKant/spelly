@@ -1,4 +1,4 @@
-import DefaultWrapper from "@/components/default-wrapper";
+import DefaultWrapper from "@/components/DefaultWrapper";
 
 export default async function Layout({
   children,
@@ -6,7 +6,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   return (
-    <DefaultWrapper>
+    <DefaultWrapper centerChildren>
       <div className="max-w-7xl flex flex-col gap-12 items-start">
         {children}
       </div>
