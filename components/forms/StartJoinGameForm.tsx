@@ -18,8 +18,14 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { initLobby } from "@/db/queries/insert";
+import { createLobbyAction } from "@/actions/lobby";
 
-export default function StartJoinGameForm() {
+interface Props {
+  userID: string;
+}
+
+export default function StartJoinGameForm({ userID }: Props) {
   const [startGameState, setStartGameState] = useState<boolean>(false);
   const [joinGameState, setJoinGameState] = useState<boolean>(false);
 
@@ -30,6 +36,10 @@ export default function StartJoinGameForm() {
       lobbyName: "",
     },
   });
+
+  const startGameSubmit = async (values: z.infer<typeof startGameSchema>) => {
+    createLobbyAction(values.lobbyName, userID);
+  };
 
   const joinGameFormReturn = useForm<z.infer<typeof joinGameSchema>>({
     resolver: zodResolver(joinGameSchema),
@@ -42,7 +52,10 @@ export default function StartJoinGameForm() {
   if (startGameState) {
     return (
       <Form {...startGameFormReturn}>
-        <form className="flex flex-col gap-4">
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={startGameFormReturn.handleSubmit(startGameSubmit)}
+        >
           <FormField
             name="lobbyName"
             control={startGameFormReturn.control}
