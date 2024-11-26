@@ -39,7 +39,7 @@ export const lobbiesInSpelly = spelly.table(
     currentPlayer: integer("current_player").default(0),
     gameState: text("game_state").default(""),
     gameStarted: boolean("game_started").default(false),
-    name: text().default("lobby"),
+    name: text().default("Lobby"),
   },
   (table) => [
     foreignKey({
