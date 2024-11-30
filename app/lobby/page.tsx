@@ -2,9 +2,9 @@ import { getLobbyInfoFromUserId, getUserName } from "@/db/queries/select";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import DeleteLobbyButton from "./_components/DeleteLobbyButton";
-import LobbyTest from "./_components/LobbyTest";
+import Lobby from "./_components/Lobby";
 
-const Lobby = async () => {
+const LobbyPage = async () => {
   const supabase = await createClient();
 
   const {
@@ -27,9 +27,13 @@ const Lobby = async () => {
         {/* <h1>Host user name: {userName ?? "username not found"}</h1> */}
         <h1>Lobby ID: {lobbyInfo.id}</h1>
         {/* {isHost && <DeleteLobbyButton userID={user.id} />} */}
-        <LobbyTest userID={user.id} userName={userName} />
+        <Lobby
+          userID={user.id}
+          userName={userName}
+          lobbyID={lobbyInfo.id}
+        />
       </div>
     </div>
   );
 };
-export default Lobby;
+export default LobbyPage;

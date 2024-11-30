@@ -3,29 +3,31 @@ import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 
 type UserStatusT = {
+  id: string;
   userName: string;
   online_at: string;
 };
 
-export default function LobbyTest({
+export default function Lobby({
   userID,
   userName,
+  lobbyID,
 }: {
   userID: string;
   userName: string;
+  lobbyID: string;
 }) {
   const supabase = createClient();
-  const [usersState, setUsersState] = useState<
-    { key: string; userName: string }[]
-  >([]);
+  const [usersState, setUsersState] = useState<UserStatusT[]>([]);
 
-  const userStatus = {
+  const userStatus: UserStatusT = {
     userName,
+    id: userID,
     online_at: new Date().toISOString(),
   };
 
   useEffect(() => {
-    const channel = supabase.channel("test-lobbyID", {
+    const channel = supabase.channel(`test-${lobbyID}`, {
       config: {
         presence: {
           key: userID,
@@ -53,14 +55,18 @@ export default function LobbyTest({
         console.log("join", key, newPresences);
         setUsersState((prevUsers) => [
           ...prevUsers,
-          { key, userName: newPresences?.[0]?.userName },
+          {
+            id: key,
+            userName: newPresences?.[0]?.userName,
+            online_at: newPresences?.[0]?.online_at,
+          },
         ]);
       })
       .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
         console.log("leave", key, leftPresences);
-        setUsersState((prevUsers) => prevUsers.filter((pu) => key !== pu.key));
+        setUsersState((prevUsers) => prevUsers.filter((pu) => key !== pu.id));
       })
-      .subscribe(async (status) => {
+      .subscribe(async () => {
         const presenceTrackStatus = await channel.track(userStatus);
         console.log(presenceTrackStatus);
       });
@@ -71,10 +77,10 @@ export default function LobbyTest({
   }, []);
 
   return (
-    <div className="">
+    <div className="flex-col gap-4">
       {usersState.map((user, ind) => (
         <p key={ind}>
-          {user.key} {user.userName}
+          {user.id} {user.userName}
         </p>
       ))}
     </div>
