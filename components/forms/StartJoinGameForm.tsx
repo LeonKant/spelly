@@ -19,7 +19,8 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { initLobby } from "@/db/queries/insert";
-import { createLobbyAction } from "@/actions/lobby";
+import { createLobbyAction, joinLobbyAction } from "@/actions/lobby";
+import { getLobbyInfoFromLobbyId } from "@/db/queries/select";
 
 interface Props {
   userID: string;
@@ -39,6 +40,9 @@ export default function StartJoinGameForm({ userID }: Props) {
 
   const startGameSubmit = async (values: z.infer<typeof startGameSchema>) => {
     createLobbyAction(values.lobbyName, userID);
+  };
+  const joinGameSubmit = async (values: z.infer<typeof joinGameSchema>) => {
+    joinLobbyAction(values.lobbyID);
   };
 
   const joinGameFormReturn = useForm<z.infer<typeof joinGameSchema>>({
@@ -88,7 +92,10 @@ export default function StartJoinGameForm({ userID }: Props) {
   if (joinGameState) {
     return (
       <Form {...joinGameFormReturn}>
-        <form className="flex flex-col gap-4">
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={joinGameFormReturn.handleSubmit(joinGameSubmit)}
+        >
           <FormField
             control={joinGameFormReturn.control}
             name="lobbyID"

@@ -6,6 +6,8 @@ import {
   text,
   integer,
   boolean,
+  timestamp,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { usersInAuth } from "./auth";
@@ -46,6 +48,33 @@ export const lobbiesInSpelly = spelly.table(
       columns: [table.hostId],
       foreignColumns: [profilesInSpelly.id],
       name: "lobbies_host_id_fkey",
+    }),
+  ]
+);
+
+export const lobbyPlayersInSpelly = spelly.table(
+  "lobby_players",
+  {
+    userId: uuid("user_id").notNull(),
+    lobbyId: uuid("lobby_id").notNull(),
+    timeJoined: timestamp("time_joined", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [profilesInSpelly.id],
+      name: "lobby_players_user_id_fkey",
+    }),
+    foreignKey({
+      columns: [table.lobbyId],
+      foreignColumns: [lobbiesInSpelly.id],
+      name: "lobby_players_lobby_id_fkey",
+    }).onDelete("cascade"),
+    primaryKey({
+      columns: [table.userId, table.lobbyId],
+      name: "lobby_players_pkey",
     }),
   ]
 );

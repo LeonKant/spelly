@@ -1,5 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import StartJoinGameForm from "./forms/StartJoinGameForm";
+import { checkIfUserInGame } from "@/db/queries/select";
+import RejoinGameButton from "@/components/RejoinGameButton";
 
 export default async function Hero() {
   const supabase = await createClient();
@@ -7,6 +9,13 @@ export default async function Hero() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // check if user already started game
+  let gameAlreadyStarted: boolean = false;
+
+  if (user?.id) {
+    gameAlreadyStarted = await checkIfUserInGame(user?.id);
+  }
 
   return (
     <div className="flex flex-col gap-16 items-center">
@@ -19,11 +28,15 @@ export default async function Hero() {
           <p className="text-zinc-100">Sign in to start gaming baybee</p>
         ) : (
           <div className="flex-1">
-            <StartJoinGameForm userID={user.id} />
+            {gameAlreadyStarted ? (
+              <RejoinGameButton />
+            ) : (
+              <StartJoinGameForm userID={user.id} />
+            )}
           </div>
         )}
         <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
       </div>
-     </div>
+    </div>
   );
 }
