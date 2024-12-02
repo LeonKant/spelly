@@ -4,7 +4,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import signUpSchema from "@/lib/schemas/SignUpSchema";
+import signUpSchema from "@/lib/form-schemas/SignUpSchema";
 import { AuthError } from "@supabase/supabase-js";
 
 export const signUpAction = async (formData: FormData) => {
