@@ -29,6 +29,8 @@ export const profilesInSpelly = spelly.table(
   ]
 );
 
+export type SpellyProfileT = typeof profilesInSpelly.$inferSelect;
+
 export const lobbiesInSpelly = spelly.table(
   "lobbies",
   {
@@ -36,12 +38,13 @@ export const lobbiesInSpelly = spelly.table(
       .default(sql`uuid_generate_v4()`)
       .primaryKey()
       .notNull(),
-    hostId: uuid("host_id"),
-    currentLetter: integer("current_letter").default(0),
-    currentPlayer: integer("current_player").default(0),
-    gameState: text("game_state").default(""),
-    gameStarted: boolean("game_started").default(false),
-    name: text().default("Lobby"),
+    hostId: uuid("host_id").notNull(),
+    currentLetter: integer("current_letter").default(0).notNull(),
+    currentPlayer: integer("current_player").default(0).notNull(),
+    gameState: text("game_state").default("").notNull(),
+    gameStarted: boolean("game_started").default(false).notNull(),
+    name: text().default("lobby").notNull(),
+    lobbyPlayerIds: uuid("lobby_player_ids").array().notNull(),
   },
   (table) => [
     foreignKey({
@@ -51,6 +54,36 @@ export const lobbiesInSpelly = spelly.table(
     }),
   ]
 );
+
+export type SpellyLobbyT = typeof lobbiesInSpelly.$inferSelect;
+
+export type SpellyLobbySnakeCaseKeysT =
+  | "id"
+  | "host_id"
+  | "current_letter"
+  | "current_player"
+  | "game_state"
+  | "game_started"
+  | "name"
+  | "lobby_player_ids";
+
+export const SpellySnakeToCamelCaseKeys: Record<
+  SpellyLobbySnakeCaseKeysT,
+  keyof SpellyLobbyT
+> = {
+  id: "id",
+  host_id: "hostId",
+  current_letter: "currentLetter",
+  current_player: "currentPlayer",
+  game_state: "gameState",
+  game_started: "gameStarted",
+  name: "name",
+  lobby_player_ids: "lobbyPlayerIds",
+};
+
+export type LobbyRealtimePayloadT = {
+  [key in SpellyLobbySnakeCaseKeysT]: any;
+};
 
 export const lobbyPlayersInSpelly = spelly.table(
   "lobby_players",

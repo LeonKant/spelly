@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { db } from "..";
 import {
   lobbiesInSpelly,
@@ -19,6 +19,14 @@ export async function getUserName(userId: string): Promise<string | null> {
       .where(eq(profilesInSpelly.id, userId))
   )[0].username;
 }
+
+export async function getProfileInfo(userIds: string[]) {
+  return await db
+    .select()
+    .from(profilesInSpelly)
+    .where(or(...userIds.map((userId) => eq(profilesInSpelly.id, userId))));
+}
+
 export async function getLobbyInfoFromHostId(userId: string) {
   return (
     await db
@@ -28,8 +36,8 @@ export async function getLobbyInfoFromHostId(userId: string) {
   )?.[0];
 }
 
-export async function checkIfUserInGame(userId: string) {
-  return (await getLobbyInfoFromUserId(userId))?.hostId === userId;
+export async function checkIfUserInGame(userId: string): Promise<boolean> {
+  return !!(await getLobbyInfoFromUserId(userId));
 }
 
 export async function getLobbyInfoFromUserId(userID: string) {
