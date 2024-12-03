@@ -15,7 +15,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import signUpSchema from "@/lib/schemas/SignUpSchema";
+import signUpSchema from "@/lib/form-schemas/SignUpSchema";
 import Link from "next/link";
 import { signUpActionTest } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";

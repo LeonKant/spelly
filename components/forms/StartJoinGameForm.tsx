@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import {
   joinGameSchema,
   startGameSchema,
-} from "@/lib/schemas/StartJoinGameSchema";
+} from "@/lib/form-schemas/StartJoinGameSchema";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
