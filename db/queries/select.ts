@@ -27,6 +27,31 @@ export async function getProfileInfo(userIds: string[]) {
     .where(or(...userIds.map((userId) => eq(profilesInSpelly.id, userId))));
 }
 
+export async function getLobbyUsernameAndPoints(lobbyId: string) {
+  const playersInLobby = db
+    .select()
+    .from(lobbyPlayersInSpelly)
+    .where(eq(lobbyPlayersInSpelly.lobbyId, lobbyId))
+    .as("playersInLobby");
+
+  const getUsernameAndPointsResult = await db
+    .select()
+    .from(profilesInSpelly)
+    .innerJoin(playersInLobby, eq(profilesInSpelly.id, playersInLobby.userId));
+
+  return getUsernameAndPointsResult.reduce(
+    (prev, curr) => {
+      const {
+        profiles: { id, username },
+        playersInLobby: { points },
+      } = curr;
+      prev[id] = { username, points };
+      return prev;
+    },
+    {} as { [id: string]: { points: number; username: string } }
+  );
+}
+
 export async function getLobbyInfoFromHostId(userId: string) {
   return (
     await db

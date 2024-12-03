@@ -18,7 +18,7 @@ export const profilesInSpelly = spelly.table(
   "profiles",
   {
     id: uuid().primaryKey().notNull(),
-    username: text(),
+    username: text().notNull(),
   },
   (table) => [
     foreignKey({
@@ -44,7 +44,7 @@ export const lobbiesInSpelly = spelly.table(
     gameState: text("game_state").default("").notNull(),
     gameStarted: boolean("game_started").default(false).notNull(),
     name: text().default("lobby").notNull(),
-    lobbyPlayerIds: uuid("lobby_player_ids").array().notNull(),
+    lobbyPlayerIds: uuid("lobby_player_ids").array().default([""]).notNull()
   },
   (table) => [
     foreignKey({
@@ -54,6 +54,8 @@ export const lobbiesInSpelly = spelly.table(
     }),
   ]
 );
+
+export type SpellyLobbyInsertT = typeof lobbiesInSpelly.$inferInsert
 
 export type SpellyLobbyT = typeof lobbiesInSpelly.$inferSelect;
 
@@ -93,6 +95,7 @@ export const lobbyPlayersInSpelly = spelly.table(
     timeJoined: timestamp("time_joined", { mode: "string" })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
+    points: integer().default(0).notNull(),
   },
   (table) => [
     foreignKey({
