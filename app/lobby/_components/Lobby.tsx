@@ -1,11 +1,17 @@
 "use client";
 import { leaveGameAction } from "@/actions/lobby";
 import { Button } from "@/components/ui/button";
-import { LobbyRealtimePayloadT, SpellyLobbyT, SpellyProfileT } from "@/db/schema/spelly";
+import { Input } from "@/components/ui/input";
+import {
+  LobbyRealtimePayloadT,
+  SpellyLobbyT,
+  SpellyProfileT,
+} from "@/db/schema/spelly";
 import { LobbySnakeToCamelCase } from "@/utils/lobby";
 import { createClient } from "@/utils/supabase/client";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import { useEffect, useRef, useState } from "react";
+import GameLobbyForm from "./GameLobbyForm";
 
 type OnlineStatusT = "IN_GAME" | "AFK" | "LEFT_GAME";
 
@@ -20,30 +26,22 @@ export default function Lobby({
   userName,
   lobbyID,
   lobbyProfiles,
+  serverLobbyState,
 }: {
   userID: string;
   userName: string;
   lobbyID: string;
-  lobbyProfiles: { [key: string]: string }[];
+  lobbyProfiles: { [key: string]: string };
+  serverLobbyState: SpellyLobbyT;
 }) {
   const supabase = createClient();
   const [channelUsersState, setChannelUsersState] = useState<
     ChannelUserStatusT[]
   >([]);
-  const [lobbyState, setLobbyState] = useState<SpellyLobbyT>();
-
-  const initUserNames = lobbyProfiles.reduce(
-    (prev, curr) => {
-      const [id, userName] = Object.entries(curr)[0];
-      prev[id] = userName ?? "";
-      return prev;
-    },
-    {} as { [key: string]: string }
-  );
-
+  const [lobbyState, setLobbyState] = useState<SpellyLobbyT>(serverLobbyState);
   const [userNameCacheState, setUserNameCacheState] = useState<{
     [key: string]: string;
-  }>(initUserNames);
+  }>(lobbyProfiles);
 
   const userStatus: ChannelUserStatusT = {
     userName,
@@ -75,8 +73,10 @@ export default function Lobby({
         },
         (payload) => {
           // const test = payload;
-          const newLobbyState = LobbySnakeToCamelCase(payload.new as LobbyRealtimePayloadT);
-          console.log({ newLobbyState });
+          const newLobbyState = LobbySnakeToCamelCase(
+            payload.new as LobbyRealtimePayloadT
+          );
+          setLobbyState(newLobbyState);
         }
       )
       .on("presence", { event: "sync" }, () => {
@@ -137,6 +137,20 @@ export default function Lobby({
           </p>
         ))}
       </div>
+      <pre>{JSON.stringify(lobbyState, null, 3)}</pre>
+
+      <h1 className="mt-9">Users In Lobby</h1>
+      <div className="flex flex-col gap-4 mb-5">
+        {lobbyState.lobbyPlayerIds.map((id) => (
+          <p key={id}>
+            {userNameCacheState[id]}
+          </p>
+        ))}
+      </div>
+      <div>
+        <GameLobbyForm lobbyState={lobbyState} userID={userID} />
+      </div>
+
       <Button
         onClick={() => {
           leaveGameAction();

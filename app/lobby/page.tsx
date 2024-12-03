@@ -28,22 +28,19 @@ const LobbyPage = async () => {
   const rawLobbyProfiles = await getProfileInfo(lobbyInfo.lobbyPlayerIds);
 
   // map id -> username
-  const lobbyProfiles = rawLobbyProfiles
-    .map((profile) => {
-      const newProfile: { [key: string]: string } = {};
-
-      if (!!!profile?.id || !!!profile.username) return;
-
-      newProfile[profile.id] = profile.username;
-      return newProfile;
-    })
-    .filter((p) => p !== undefined);
+  const initUserNames = rawLobbyProfiles.reduce(
+    (prev, curr) => {
+      prev[curr.id] = userName ?? "";
+      return prev;
+    },
+    {} as { [key: string]: string }
+  );
 
   const isHost = lobbyInfo.hostId === user.id;
 
   return (
     <div className="flex-1">
-      <div className="">
+      <div>
         <h1>Lobby name: {lobbyInfo.name ?? "lobby name not found"} </h1>
         {/* <h1>Host user name: {userName ?? "username not found"}</h1> */}
         <h1>Lobby ID: {lobbyInfo.id}</h1>
@@ -51,7 +48,8 @@ const LobbyPage = async () => {
           userID={user.id}
           userName={userName}
           lobbyID={lobbyInfo.id}
-          lobbyProfiles={lobbyProfiles}
+          lobbyProfiles={initUserNames}
+          serverLobbyState={lobbyInfo}
         />
       </div>
       {isHost && <DeleteLobbyButton />}
