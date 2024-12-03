@@ -30,7 +30,7 @@ export default function GameLobbyForm({ lobbyState, userID }: Props) {
 
   return (
     <Form {...gameLobbyFormReturn}>
-      <form className="mx-1">
+      <form className="flex flex-col items-center mx-1">
         <FormField
           name="gameInput"
           control={gameLobbyFormReturn.control}
@@ -59,7 +59,7 @@ export default function GameLobbyForm({ lobbyState, userID }: Props) {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="w-fit">Submit</Button>
       </form>
     </Form>
   );

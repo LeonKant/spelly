@@ -9,9 +9,21 @@ import {
 } from "@/db/schema/spelly";
 import { LobbySnakeToCamelCase } from "@/utils/lobby";
 import { createClient } from "@/utils/supabase/client";
-import { RealtimeChannel } from "@supabase/supabase-js";
+import {
+  RealtimeChannel,
+  RealtimePostgresInsertPayload,
+  RealtimePostgresUpdatePayload,
+} from "@supabase/supabase-js";
 import { useEffect, useRef, useState } from "react";
 import GameLobbyForm from "./GameLobbyForm";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby";
 
 type OnlineStatusT = "IN_GAME" | "AFK" | "LEFT_GAME";
 
@@ -31,7 +43,7 @@ export default function Lobby({
   userID: string;
   userName: string;
   lobbyID: string;
-  lobbyProfiles: { [key: string]: string };
+  lobbyProfiles: LobbyPlayersT<LobbyPlayerStatusT>;
   serverLobbyState: SpellyLobbyT;
 }) {
   const supabase = createClient();
@@ -39,9 +51,19 @@ export default function Lobby({
     ChannelUserStatusT[]
   >([]);
   const [lobbyState, setLobbyState] = useState<SpellyLobbyT>(serverLobbyState);
+  const [lobbyPlayers, setLobbyPlayers] =
+    useState<LobbyPlayersT<Partial<LobbyPlayerStatusT>>>(lobbyProfiles);
+
+  const initUserNameCache = Object.entries(lobbyProfiles).reduce(
+    (prev, [id, value]) => {
+      prev[id] = value.username;
+      return prev;
+    },
+    {} as { [id: string]: string }
+  );
   const [userNameCacheState, setUserNameCacheState] = useState<{
     [key: string]: string;
-  }>(lobbyProfiles);
+  }>(initUserNameCache);
 
   const userStatus: ChannelUserStatusT = {
     userName,
@@ -50,6 +72,31 @@ export default function Lobby({
   };
 
   const channelRef = useRef<RealtimeChannel>();
+
+  const handleLobbyPlayerInsertOrUpdate = (
+    payload:
+      | RealtimePostgresInsertPayload<{
+          [key: string]: any;
+        }>
+      | RealtimePostgresUpdatePayload<{
+          [key: string]: any;
+        }>
+  ) => {
+    if (payload?.new?.points < 0) {
+      console.log("User points not found");
+      return;
+    }
+
+    if (!!!payload?.new?.user_id) {
+      console.log("User id not found");
+      return;
+    }
+
+    setLobbyPlayers((prev) => {
+      prev[payload.new.user_id] = { points: payload.new.points };
+      return prev;
+    });
+  };
 
   useEffect(() => {
     channelRef.current = supabase.channel(`lobby-${lobbyID}`, {
@@ -72,12 +119,31 @@ export default function Lobby({
           filter: `id=eq.${lobbyID}`,
         },
         (payload) => {
-          // const test = payload;
           const newLobbyState = LobbySnakeToCamelCase(
             payload.new as LobbyRealtimePayloadT
           );
           setLobbyState(newLobbyState);
         }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "spelly",
+          table: "lobby_players",
+          filter: `lobby_id=eq.${lobbyID}`,
+        },
+        handleLobbyPlayerInsertOrUpdate
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "spelly",
+          table: "lobby_players",
+          filter: `lobby_id=eq.${lobbyID}`,
+        },
+        handleLobbyPlayerInsertOrUpdate
       )
       .on("presence", { event: "sync" }, () => {
         const clients = channel.presenceState();
@@ -107,7 +173,6 @@ export default function Lobby({
       })
       .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
         console.log("leave", key, leftPresences);
-        // setUsersState((prevUsers) => prevUsers.filter((pu) => key !== pu.id));
       })
       .subscribe(async () => {
         const presenceTrackStatus = await channel.track(userStatus);
@@ -120,8 +185,14 @@ export default function Lobby({
   }, []);
 
   return (
-    <>
-      <h1 className="mt-9">Users in channel</h1>
+    <div className="flex flex-1 justify-center">
+      <div className="min-w-fit basis-1/5">
+        <SidebarTrigger className="min-w-fit min-h-fit p-2 [&_svg]:size-8 [&_svg]:shrink-1 text-lg">
+          Lobby Options
+        </SidebarTrigger>
+      </div>
+
+      {/* <h1 className="mt-9">Users in channel</h1>
       <div className="flex flex-col gap-4">
         {channelUsersState.map((user, ind) => (
           <p key={ind}>
@@ -131,33 +202,51 @@ export default function Lobby({
       </div>
       <h1 className="mt-9">Username Cache</h1>
       <div className="flex flex-col gap-4 mb-5">
-        {Object.entries(userNameCacheState).map(([id, value]) => (
+        {Object.keys(lobbyPlayers).map((id) => (
           <p key={id}>
-            {id} {value}
+            {id} {userNameCacheState[id] ?? "no username found"}
           </p>
         ))}
       </div>
-      <pre>{JSON.stringify(lobbyState, null, 3)}</pre>
+      <pre>{JSON.stringify(lobbyState, null, 3)}</pre> */}
 
-      <h1 className="mt-9">Users In Lobby</h1>
-      <div className="flex flex-col gap-4 mb-5">
-        {lobbyState.lobbyPlayerIds.map((id) => (
-          <p key={id}>
-            {userNameCacheState[id]}
-          </p>
-        ))}
-      </div>
-      <div>
+      <div className="flex flex-col justify-center basis-3/5">
         <GameLobbyForm lobbyState={lobbyState} userID={userID} />
       </div>
-
-      <Button
-        onClick={() => {
-          leaveGameAction();
-        }}
-      >
-        Leave Game
-      </Button>
-    </>
+      <div className="basis-1/5">
+        <Accordion
+          type="single"
+          collapsible
+          defaultValue="player-names"
+          title="lobby-players"
+        >
+          <AccordionItem value="player-names">
+            <AccordionTrigger className="hover:no-underline">
+              <div className="flex-1 text-center">Players</div>
+            </AccordionTrigger>
+            <AccordionContent>
+              {lobbyState.lobbyPlayerIds.map((id) => (
+                <p key={id}>
+                  {userNameCacheState[id]} points: {lobbyPlayers[id]?.points}
+                </p>
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+        <h1 className="mt-9">Users In Lobby</h1>
+        <div className="flex flex-col gap-4 mb-5">
+          {lobbyState.lobbyPlayerIds.map((id) => (
+            <p key={id}>{userNameCacheState[id]}</p>
+          ))}
+        </div>
+        <Button
+          onClick={() => {
+            leaveGameAction();
+          }}
+        >
+          Leave Game
+        </Button>
+      </div>
+    </div>
   );
 }

@@ -1,5 +1,6 @@
 import {
   getLobbyInfoFromUserId,
+  getLobbyUsernameAndPoints,
   getProfileInfo,
   getUserName,
 } from "@/db/queries/select";
@@ -8,6 +9,7 @@ import { redirect } from "next/navigation";
 import DeleteLobbyButton from "./_components/DeleteLobbyButton";
 import Lobby from "./_components/Lobby";
 import { SpellyLobbyT } from "@/db/schema/spelly";
+import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby";
 
 const LobbyPage = async () => {
   const supabase = await createClient();
@@ -25,22 +27,14 @@ const LobbyPage = async () => {
   );
   if (!lobbyInfo) redirect("/");
 
-  const rawLobbyProfiles = await getProfileInfo(lobbyInfo.lobbyPlayerIds);
-
-  // map id -> username
-  const initUserNames = rawLobbyProfiles.reduce(
-    (prev, curr) => {
-      prev[curr.id] = userName ?? "";
-      return prev;
-    },
-    {} as { [key: string]: string }
-  );
+  const lobbyProfiles: LobbyPlayersT<LobbyPlayerStatusT> =
+    await getLobbyUsernameAndPoints(lobbyInfo.id);
 
   const isHost = lobbyInfo.hostId === user.id;
 
   return (
-    <div className="flex-1">
-      <div>
+    <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1">
         <h1>Lobby name: {lobbyInfo.name ?? "lobby name not found"} </h1>
         {/* <h1>Host user name: {userName ?? "username not found"}</h1> */}
         <h1>Lobby ID: {lobbyInfo.id}</h1>
@@ -48,7 +42,7 @@ const LobbyPage = async () => {
           userID={user.id}
           userName={userName}
           lobbyID={lobbyInfo.id}
-          lobbyProfiles={initUserNames}
+          lobbyProfiles={lobbyProfiles}
           serverLobbyState={lobbyInfo}
         />
       </div>

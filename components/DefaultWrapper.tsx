@@ -10,7 +10,7 @@ export default function DefaultWrapper({
   children,
 }: { centerChildren?: boolean } & PropsWithChildren) {
   return (
-    <main className="min-h-screen flex flex-col items-center">
+    <main className="min-h-screen flex-1 flex flex-col items-center">
       <div
         className={`flex-1 w-full flex flex-col justify-between ${centerChildren && "items-center"}`}
       >
