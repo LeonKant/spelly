@@ -11,6 +11,10 @@ import {
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { usersInAuth } from "./auth";
+import {
+  SpellyLobbyRealtimePayloadT,
+  SpellyPrevRoundsRealtimePayloadT,
+} from "@/types/realtime";
 
 export const spelly = pgSchema("spelly");
 
@@ -44,7 +48,7 @@ export const lobbiesInSpelly = spelly.table(
     gameState: text("game_state").default("").notNull(),
     gameStarted: boolean("game_started").default(false).notNull(),
     name: text().default("lobby").notNull(),
-    lobbyPlayerIds: uuid("lobby_player_ids").array().default([""]).notNull()
+    lobbyPlayerIds: uuid("lobby_player_ids").array().default([""]).notNull(),
   },
   (table) => [
     foreignKey({
@@ -55,22 +59,12 @@ export const lobbiesInSpelly = spelly.table(
   ]
 );
 
-export type SpellyLobbyInsertT = typeof lobbiesInSpelly.$inferInsert
+export type SpellyLobbyInsertT = typeof lobbiesInSpelly.$inferInsert;
 
 export type SpellyLobbyT = typeof lobbiesInSpelly.$inferSelect;
 
-export type SpellyLobbySnakeCaseKeysT =
-  | "id"
-  | "host_id"
-  | "current_letter"
-  | "current_player"
-  | "game_state"
-  | "game_started"
-  | "name"
-  | "lobby_player_ids";
-
-export const SpellySnakeToCamelCaseKeys: Record<
-  SpellyLobbySnakeCaseKeysT,
+export const SpellyLobbySnakeToCamelCaseKeys: Record<
+  keyof SpellyLobbyRealtimePayloadT,
   keyof SpellyLobbyT
 > = {
   id: "id",
@@ -81,10 +75,6 @@ export const SpellySnakeToCamelCaseKeys: Record<
   game_started: "gameStarted",
   name: "name",
   lobby_player_ids: "lobbyPlayerIds",
-};
-
-export type LobbyRealtimePayloadT = {
-  [key in SpellyLobbySnakeCaseKeysT]: any;
 };
 
 export const lobbyPlayersInSpelly = spelly.table(
@@ -114,3 +104,36 @@ export const lobbyPlayersInSpelly = spelly.table(
     }),
   ]
 );
+
+export const lobbyPrevRoundsInSpelly = spelly.table(
+  "lobby_prev_rounds",
+  {
+    id: uuid()
+      .default(sql`uuid_generate_v4()`)
+      .primaryKey()
+      .notNull(),
+    lobbyId: uuid("lobby_id").notNull(),
+    gameState: text("game_state").notNull(),
+    loserUserName: text("loser_user_name").notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.lobbyId],
+      foreignColumns: [lobbiesInSpelly.id],
+      name: "lobby_prev_rounds_lobby_id_fkey",
+    }).onDelete("cascade"),
+  ]
+);
+
+export type SpellyLobbyPrevRoundsT =
+  typeof lobbyPrevRoundsInSpelly.$inferSelect;
+
+export const SpellyPrevRoundsSnakeToCamelCaseKeys: Record<
+  keyof SpellyPrevRoundsRealtimePayloadT,
+  keyof SpellyLobbyPrevRoundsT
+> = {
+  game_state: "id",
+  id: "gameState",
+  lobby_id: "lobbyId",
+  loser_user_name: "loserUserName",
+};
