@@ -1,16 +1,42 @@
 import {
-  LobbyRealtimePayloadT,
-  SpellyLobbySnakeCaseKeysT,
+  SpellyLobbyRealtimePayloadT,
+  SpellyPrevRoundsRealtimePayloadT,
+} from "@/types/realtime";
+import {
+  SpellyLobbyPrevRoundsT,
+  SpellyLobbySnakeToCamelCaseKeys,
   SpellyLobbyT,
-  SpellySnakeToCamelCaseKeys,
+  SpellyPrevRoundsSnakeToCamelCaseKeys,
 } from "@/db/schema/spelly";
 
-export function LobbySnakeToCamelCase(
-  lobbyPayload: LobbyRealtimePayloadT
-): SpellyLobbyT {
-  return Object.entries(lobbyPayload).reduce((prev, [key, value]) => {
-    const newKey = SpellySnakeToCamelCaseKeys[key as SpellyLobbySnakeCaseKeysT];
+function snakeToCamelCase<
+  RealTimeT extends Record<string, any>,
+  SchemaT extends Record<string, any>,
+>(
+  payload: RealTimeT,
+  snakeToCamelMap: Record<keyof RealTimeT, keyof SchemaT>
+): SchemaT {
+  return Object.entries(payload).reduce((prev, [key, value]) => {
+    const newKey = snakeToCamelMap[key as keyof RealTimeT];
     prev[newKey] = value;
     return prev;
-  }, {} as Partial<SpellyLobbyT>) as SpellyLobbyT;
+  }, {} as Partial<SchemaT>) as SchemaT;
+}
+
+export function LobbySnakeToCamelCase(
+  lobbyPayload: SpellyLobbyRealtimePayloadT
+): SpellyLobbyT {
+  return snakeToCamelCase<SpellyLobbyRealtimePayloadT, SpellyLobbyT>(
+    lobbyPayload,
+    SpellyLobbySnakeToCamelCaseKeys
+  );
+}
+
+export function PrevRoundsSnakeToCamelCase(
+  prevRoundsPayload: SpellyPrevRoundsRealtimePayloadT
+) {
+  return snakeToCamelCase<
+    SpellyPrevRoundsRealtimePayloadT,
+    SpellyLobbyPrevRoundsT
+  >(prevRoundsPayload, SpellyPrevRoundsSnakeToCamelCaseKeys);
 }
