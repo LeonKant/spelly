@@ -12,6 +12,7 @@ import {
 import { SpellyLobbyT } from "@/db/schema/spelly";
 import { gameLobbySchema } from "@/lib/form-schemas/GameLobbyScema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -30,20 +31,20 @@ export default function GameLobbyForm({ lobbyState, userID }: Props) {
 
   return (
     <Form {...gameLobbyFormReturn}>
-      <form className="flex flex-col items-center mx-1">
+      <form
+        className="flex flex-col items-center mx-1 gap-4"
+        onSubmit={(e: FormEvent<HTMLFormElement>) => {
+          e.preventDefault();
+        }}
+      >
         <FormField
           name="gameInput"
           control={gameLobbyFormReturn.control}
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Game Input</FormLabel>
+            <FormItem className="w-full">
+              <FormLabel className="text-xl">Game Input</FormLabel>
               <FormControl>
-                <div
-                  className={`flex w-fit h-10 rounded-md border-2 border-input bg-background px-3 
-                    py-2 text-sm ring-offset-background has-[:focus]:outline-none 
-                    has-[:focus]:ring-2 has-[:focus]:ring-ring has-[:focus]:ring-offset-2 
-                    has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50`}
-                >
+                <div className="flex w-full rounded-md border-2 border-input bg-background px-3 py-2 ring-offset-background has-[:focus]:outline-none has-[:focus]:ring-2 has-[:focus]:ring-ring has-[:focus]:ring-offset-2 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 text-2xl items-center">
                   {gameState}
                   <input
                     disabled={userID !== lobbyPlayerIds[currentPlayer]}
@@ -59,7 +60,9 @@ export default function GameLobbyForm({ lobbyState, userID }: Props) {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-fit">Submit</Button>
+        <Button type="submit" className="w-fit text-lg">
+          Submit
+        </Button>
       </form>
     </Form>
   );

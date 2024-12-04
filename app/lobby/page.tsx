@@ -6,10 +6,11 @@ import {
 } from "@/db/queries/select";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import DeleteLobbyButton from "./_components/DeleteLobbyButton";
-import Lobby from "./_components/Lobby";
+import Lobby, { LobbyComponentPropsT } from "./_components/Lobby";
 import { SpellyLobbyT } from "@/db/schema/spelly";
 import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby";
+import { LobbySidebar } from "@/components/lobby/LobbySidebar";
+import DefaultWrapper from "@/components/DefaultWrapper";
 
 const LobbyPage = async () => {
   const supabase = await createClient();
@@ -30,24 +31,26 @@ const LobbyPage = async () => {
   const lobbyProfiles: LobbyPlayersT<LobbyPlayerStatusT> =
     await getLobbyUsernameAndPoints(lobbyInfo.id);
 
-  const isHost = lobbyInfo.hostId === user.id;
+  // const isHost = lobbyInfo.hostId === user.id;
 
   return (
-    <div className="flex flex-col flex-1">
-      <div className="flex flex-col flex-1">
-        <h1>Lobby name: {lobbyInfo.name ?? "lobby name not found"} </h1>
-        {/* <h1>Host user name: {userName ?? "username not found"}</h1> */}
-        <h1>Lobby ID: {lobbyInfo.id}</h1>
-        <Lobby
-          userID={user.id}
-          userName={userName}
-          lobbyID={lobbyInfo.id}
-          lobbyProfiles={lobbyProfiles}
-          serverLobbyState={lobbyInfo}
-        />
-      </div>
-      {isHost && <DeleteLobbyButton />}
-    </div>
+    <>
+      <LobbySidebar />
+      <DefaultWrapper>
+        <div className="flex flex-col flex-1 m-4 text-lg">
+          {/* <h1>Lobby name: {lobbyInfo.name ?? "lobby name not found"} </h1> */}
+          {/* <h1>Host user name: {userName ?? "username not found"}</h1> */}
+          <h1>Lobby ID: {lobbyInfo.id}</h1>
+
+          <Lobby
+            userID={user.id}
+            userName={userName}
+            lobbyProfiles={lobbyProfiles}
+            serverLobbyState={lobbyInfo}
+          />
+        </div>
+      </DefaultWrapper>
+    </>
   );
 };
 export default LobbyPage;
