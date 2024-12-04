@@ -3,7 +3,6 @@ import { leaveGameAction } from "@/actions/lobby";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  LobbyRealtimePayloadT,
   SpellyLobbyT,
   SpellyProfileT,
 } from "@/db/schema/spelly";
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/accordion";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby";
+import { SpellyLobbyRealtimePayloadT } from "@/types/realtime";
 
 type OnlineStatusT = "IN_GAME" | "AFK" | "LEFT_GAME";
 
@@ -33,20 +33,22 @@ type ChannelUserStatusT = {
   online_at: string;
 };
 
+export interface LobbyComponentPropsT {
+  userID: string;
+  userName: string;
+  lobbyProfiles: LobbyPlayersT<LobbyPlayerStatusT>;
+  serverLobbyState: SpellyLobbyT;
+}
+
 export default function Lobby({
   userID,
   userName,
-  lobbyID,
   lobbyProfiles,
   serverLobbyState,
-}: {
-  userID: string;
-  userName: string;
-  lobbyID: string;
-  lobbyProfiles: LobbyPlayersT<LobbyPlayerStatusT>;
-  serverLobbyState: SpellyLobbyT;
-}) {
+}: LobbyComponentPropsT) {
   const supabase = createClient();
+  const { id: lobbyID } = serverLobbyState;
+
   const [channelUsersState, setChannelUsersState] = useState<
     ChannelUserStatusT[]
   >([]);
@@ -120,7 +122,7 @@ export default function Lobby({
         },
         (payload) => {
           const newLobbyState = LobbySnakeToCamelCase(
-            payload.new as LobbyRealtimePayloadT
+            payload.new as SpellyLobbyRealtimePayloadT
           );
           setLobbyState(newLobbyState);
         }
@@ -188,7 +190,7 @@ export default function Lobby({
     <div className="flex flex-1 justify-center">
       <div className="min-w-fit basis-1/5">
         <SidebarTrigger className="min-w-fit min-h-fit p-2 [&_svg]:size-8 [&_svg]:shrink-1 text-lg">
-          Lobby Options
+          {/* Lobby Options */}
         </SidebarTrigger>
       </div>
 
