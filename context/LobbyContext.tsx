@@ -53,7 +53,7 @@ export const useSpellyLobby = () => {
   const context = useContext(SpellyLobbyContext);
   if (!context) {
     throw new Error(
-      "useSpellyLobby must be used within a SpellyLobbyProvider."
+      "useSpellyLobby must be used within a SpellyLobbyProvider.",
     );
   }
 
@@ -86,7 +86,7 @@ export const SpellyLobbyProvider = ({
       prev[id] = value.username;
       return prev;
     },
-    {} as { [id: string]: string }
+    {} as { [id: string]: string },
   );
   const [userNameCacheState, setUserNameCacheState] = useState<{
     [key: string]: string;
@@ -107,7 +107,7 @@ export const SpellyLobbyProvider = ({
         }>
       | RealtimePostgresUpdatePayload<{
           [key: string]: any;
-        }>
+        }>,
   ) => {
     if (payload?.new?.points < 0) {
       console.log("User points not found");
@@ -147,10 +147,10 @@ export const SpellyLobbyProvider = ({
         },
         (payload) => {
           const newLobbyState = LobbySnakeToCamelCase(
-            payload.new as SpellyLobbyRealtimePayloadT
+            payload.new as SpellyLobbyRealtimePayloadT,
           );
           setLobbyState(newLobbyState);
-        }
+        },
       )
       .on(
         "postgres_changes",
@@ -160,7 +160,7 @@ export const SpellyLobbyProvider = ({
           table: "lobby_players",
           filter: `lobby_id=eq.${lobbyID}`,
         },
-        handleLobbyPlayerInsertOrUpdate
+        handleLobbyPlayerInsertOrUpdate,
       )
       .on(
         "postgres_changes",
@@ -170,7 +170,7 @@ export const SpellyLobbyProvider = ({
           table: "lobby_players",
           filter: `lobby_id=eq.${lobbyID}`,
         },
-        handleLobbyPlayerInsertOrUpdate
+        handleLobbyPlayerInsertOrUpdate,
       )
       .on(
         "postgres_changes",
@@ -181,14 +181,12 @@ export const SpellyLobbyProvider = ({
           filter: `lobby_id=eq.${lobbyID}`,
         },
         (payload) => {
-
           const newPrevRound = PrevRoundsSnakeToCamelCase(
-            payload.new as SpellyPrevRoundRealtimePayloadT
+            payload.new as SpellyPrevRoundRealtimePayloadT,
           );
 
           setPrevRoundsState((prev) => [...prev, newPrevRound]);
-
-        }
+        },
       )
       .on("presence", { event: "sync" }, () => {
         const clients = channel.presenceState();

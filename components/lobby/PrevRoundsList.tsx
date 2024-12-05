@@ -10,7 +10,7 @@ export function PrevRoundsList() {
       {prevRoundsState.map((s) => (
         <SidebarMenuItem key={s.id}>
           <SidebarMenuButton className="cursor-default">
-            <div className="text-base text-nowrap overflow-x-scroll">
+            <div className="overflow-x-scroll text-nowrap text-base">
               <span className="text-muted-foreground"> {s.loserUserName}</span>:{" "}
               {s.gameState}
             </div>

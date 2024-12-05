@@ -32,7 +32,7 @@ export default function GameLobbyForm({ lobbyState, userID }: Props) {
   return (
     <Form {...gameLobbyFormReturn}>
       <form
-        className="flex flex-col items-center mx-1 gap-4"
+        className="mx-1 flex flex-col items-center gap-4"
         onSubmit={(e: FormEvent<HTMLFormElement>) => {
           e.preventDefault();
         }}
@@ -43,15 +43,13 @@ export default function GameLobbyForm({ lobbyState, userID }: Props) {
           render={({ field }) => (
             <FormItem className="w-full">
               <FormControl>
-                <div className="flex w-full rounded-md border-2 border-input bg-background px-3 py-2 ring-offset-background has-[:focus]:outline-none has-[:focus]:ring-2 has-[:focus]:ring-ring has-[:focus]:ring-offset-2 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 text-2xl items-center">
+                <div className="flex w-full items-center rounded-md border-2 border-input bg-background px-3 py-2 text-2xl ring-offset-background has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 has-[:focus]:outline-none has-[:focus]:ring-2 has-[:focus]:ring-ring has-[:focus]:ring-offset-2">
                   {gameState}
                   <input
                     disabled={userID !== lobbyPlayerIds[currentPlayer]}
                     {...field}
                     maxLength={1}
-                    className={`border-none bg-inherit outline-none 
-                      file:border-0 file:bg-transparent file:text-sm file:font-medium 
-                      placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60`}
+                    className={`border-none bg-inherit outline-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60`}
                   />
                 </div>
               </FormControl>

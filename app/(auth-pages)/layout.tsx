@@ -7,7 +7,7 @@ export default async function Layout({
 }) {
   return (
     <DefaultWrapper centerChildren>
-      <div className="max-w-7xl flex flex-col gap-12 items-start">
+      <div className="flex max-w-7xl flex-col items-start gap-12">
         {children}
       </div>
     </DefaultWrapper>

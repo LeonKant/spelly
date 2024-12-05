@@ -30,7 +30,7 @@ export const profilesInSpelly = spelly.table(
       foreignColumns: [usersInAuth.id],
       name: "profiles_id_fkey",
     }).onDelete("cascade"),
-  ]
+  ],
 );
 
 export type SpellyProfileT = typeof profilesInSpelly.$inferSelect;
@@ -56,7 +56,7 @@ export const lobbiesInSpelly = spelly.table(
       foreignColumns: [profilesInSpelly.id],
       name: "lobbies_host_id_fkey",
     }),
-  ]
+  ],
 );
 
 export type SpellyLobbyInsertT = typeof lobbiesInSpelly.$inferInsert;
@@ -102,7 +102,7 @@ export const lobbyPlayersInSpelly = spelly.table(
       columns: [table.userId, table.lobbyId],
       name: "lobby_players_pkey",
     }),
-  ]
+  ],
 );
 
 export const lobbyPrevRoundsInSpelly = spelly.table(
@@ -115,7 +115,9 @@ export const lobbyPrevRoundsInSpelly = spelly.table(
     lobbyId: uuid("lobby_id").notNull(),
     gameState: text("game_state").notNull(),
     loserUserName: text("loser_user_name").notNull(),
-    timeAdded: timestamp("time_added", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+    timeAdded: timestamp("time_added", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
   },
   (table) => [
     foreignKey({
@@ -123,7 +125,7 @@ export const lobbyPrevRoundsInSpelly = spelly.table(
       foreignColumns: [lobbiesInSpelly.id],
       name: "lobby_prev_rounds_lobby_id_fkey",
     }).onDelete("cascade"),
-  ]
+  ],
 );
 
 export type SpellyLobbyPrevRoundT = typeof lobbyPrevRoundsInSpelly.$inferSelect;

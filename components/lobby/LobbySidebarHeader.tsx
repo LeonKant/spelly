@@ -38,11 +38,11 @@ export default function LobbySidebarHeader() {
 
   return (
     <SidebarHeader className="mt-2">
-      <span className="mx-2 font-semibold text-lg">{lobbyName}</span>
+      <span className="mx-2 text-lg font-semibold">{lobbyName}</span>
 
       <Collapsible defaultOpen={true} className="group/collapsible">
         <CollapsibleTrigger className="w-full">
-          <SidebarGroupLabel className="flex justify-between flex-1 group/label text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+          <SidebarGroupLabel className="group/label flex flex-1 justify-between text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
             Lobby Info
             <ChevronRight className="transition-transform group-data-[state=open]/collapsible:rotate-90" />
           </SidebarGroupLabel>
@@ -64,7 +64,7 @@ export default function LobbySidebarHeader() {
                 </SidebarMenuItem>
                 <SidebarMenuItem className="min-h-fit">
                   <SidebarMenuButton
-                    className="min-h-fit "
+                    className="min-h-fit"
                     onClick={handleLinkClick}
                   >
                     <div className="max-w-full text-ellipsis">

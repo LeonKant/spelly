@@ -14,7 +14,7 @@ function snakeToCamelCase<
   SchemaT extends Record<string, any>,
 >(
   payload: RealTimeT,
-  snakeToCamelMap: Record<keyof RealTimeT, keyof SchemaT>
+  snakeToCamelMap: Record<keyof RealTimeT, keyof SchemaT>,
 ): SchemaT {
   return Object.entries(payload).reduce((prev, [key, value]) => {
     const newKey = snakeToCamelMap[key as keyof RealTimeT];
@@ -24,16 +24,16 @@ function snakeToCamelCase<
 }
 
 export function LobbySnakeToCamelCase(
-  lobbyPayload: SpellyLobbyRealtimePayloadT
+  lobbyPayload: SpellyLobbyRealtimePayloadT,
 ): SpellyLobbyT {
   return snakeToCamelCase<SpellyLobbyRealtimePayloadT, SpellyLobbyT>(
     lobbyPayload,
-    SpellyLobbySnakeToCamelCaseKeys
+    SpellyLobbySnakeToCamelCaseKeys,
   );
 }
 
 export function PrevRoundsSnakeToCamelCase(
-  prevRoundsPayload: SpellyPrevRoundRealtimePayloadT
+  prevRoundsPayload: SpellyPrevRoundRealtimePayloadT,
 ) {
   return snakeToCamelCase<
     SpellyPrevRoundRealtimePayloadT,

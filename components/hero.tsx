@@ -18,10 +18,10 @@ export default async function Hero() {
   }
 
   return (
-    <div className="flex flex-col gap-16 items-center">
-      <div className="flex flex-col gap-16 items-center">
-        <h1 className="text-6xl lg:text-7xl font-bold">Spelly</h1>
-        <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center text-muted-foreground">
+    <div className="flex flex-col items-center gap-16">
+      <div className="flex flex-col items-center gap-16">
+        <h1 className="text-6xl font-bold lg:text-7xl">Spelly</h1>
+        <p className="mx-auto max-w-xl text-center text-3xl !leading-tight text-muted-foreground lg:text-4xl">
           The best word game to ever be invented
         </p>
         {!user?.id ? (
@@ -35,7 +35,7 @@ export default async function Hero() {
             )}
           </div>
         )}
-        <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
+        <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
       </div>
     </div>
   );

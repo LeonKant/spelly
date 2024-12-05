@@ -12,7 +12,7 @@ export async function deletePlayerFromLobby(userID: string, lobbyID: string) {
     .where(
       and(
         eq(lobbyPlayersInSpelly.userId, userID),
-        eq(lobbyPlayersInSpelly.lobbyId, lobbyID)
-      )
+        eq(lobbyPlayersInSpelly.lobbyId, lobbyID),
+      ),
     );
 }

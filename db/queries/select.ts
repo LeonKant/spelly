@@ -50,7 +50,7 @@ export async function getLobbyUsernameAndPoints(lobbyId: string) {
       prev[id] = { username, points };
       return prev;
     },
-    {} as { [id: string]: { points: number; username: string } }
+    {} as { [id: string]: { points: number; username: string } },
   );
 }
 
@@ -95,7 +95,7 @@ export async function getLobbyInfoFromLobbyId(lobbyID: string) {
 }
 
 export async function getLobbyPrevRounds(
-  lobbyID: string
+  lobbyID: string,
 ): Promise<SpellyLobbyPrevRoundT[]> {
   return await db
     .select()

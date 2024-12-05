@@ -22,7 +22,7 @@ const databaseUrl = process.env.DATABASE_URL ?? "";
 
 if (process.env.NODE_ENV !== "production") {
   if (!global.postgresSqlClient) {
-    console.log("new postgres connection:", databaseUrl)
+    console.log("new postgres connection:", databaseUrl);
     global.postgresSqlClient = postgres(databaseUrl);
   }
   postgresSqlClient = global.postgresSqlClient;

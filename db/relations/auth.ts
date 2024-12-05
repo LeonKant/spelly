@@ -22,7 +22,7 @@ export const refreshTokensInAuthRelations = relations(
       fields: [refreshTokensInAuth.sessionId],
       references: [sessionsInAuth.id],
     }),
-  })
+  }),
 );
 
 export const sessionsInAuthRelations = relations(
@@ -34,7 +34,7 @@ export const sessionsInAuthRelations = relations(
       references: [usersInAuth.id],
     }),
     mfaAmrClaimsInAuths: many(mfaAmrClaimsInAuth),
-  })
+  }),
 );
 
 export const samlRelayStatesInAuthRelations = relations(
@@ -48,14 +48,14 @@ export const samlRelayStatesInAuthRelations = relations(
       fields: [samlRelayStatesInAuth.ssoProviderId],
       references: [ssoProvidersInAuth.id],
     }),
-  })
+  }),
 );
 
 export const flowStateInAuthRelations = relations(
   flowStateInAuth,
   ({ many }) => ({
     samlRelayStatesInAuths: many(samlRelayStatesInAuth),
-  })
+  }),
 );
 
 export const ssoProvidersInAuthRelations = relations(
@@ -64,7 +64,7 @@ export const ssoProvidersInAuthRelations = relations(
     samlRelayStatesInAuths: many(samlRelayStatesInAuth),
     ssoDomainsInAuths: many(ssoDomainsInAuth),
     samlProvidersInAuths: many(samlProvidersInAuth),
-  })
+  }),
 );
 
 export const usersInAuthRelations = relations(usersInAuth, ({ many }) => ({
@@ -81,7 +81,7 @@ export const ssoDomainsInAuthRelations = relations(
       fields: [ssoDomainsInAuth.ssoProviderId],
       references: [ssoProvidersInAuth.id],
     }),
-  })
+  }),
 );
 
 export const mfaAmrClaimsInAuthRelations = relations(
@@ -91,7 +91,7 @@ export const mfaAmrClaimsInAuthRelations = relations(
       fields: [mfaAmrClaimsInAuth.sessionId],
       references: [sessionsInAuth.id],
     }),
-  })
+  }),
 );
 
 export const samlProvidersInAuthRelations = relations(
@@ -101,7 +101,7 @@ export const samlProvidersInAuthRelations = relations(
       fields: [samlProvidersInAuth.ssoProviderId],
       references: [ssoProvidersInAuth.id],
     }),
-  })
+  }),
 );
 
 export const identitiesInAuthRelations = relations(
@@ -111,7 +111,7 @@ export const identitiesInAuthRelations = relations(
       fields: [identitiesInAuth.userId],
       references: [usersInAuth.id],
     }),
-  })
+  }),
 );
 
 export const oneTimeTokensInAuthRelations = relations(
@@ -121,7 +121,7 @@ export const oneTimeTokensInAuthRelations = relations(
       fields: [oneTimeTokensInAuth.userId],
       references: [usersInAuth.id],
     }),
-  })
+  }),
 );
 
 export const mfaFactorsInAuthRelations = relations(
@@ -132,7 +132,7 @@ export const mfaFactorsInAuthRelations = relations(
       references: [usersInAuth.id],
     }),
     mfaChallengesInAuths: many(mfaChallengesInAuth),
-  })
+  }),
 );
 
 export const mfaChallengesInAuthRelations = relations(
@@ -142,5 +142,5 @@ export const mfaChallengesInAuthRelations = relations(
       fields: [mfaChallengesInAuth.factorId],
       references: [mfaFactorsInAuth.id],
     }),
-  })
+  }),
 );

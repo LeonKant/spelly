@@ -25,12 +25,10 @@ export function LobbyPlayerList() {
           <div className="flex flex-col gap-4">
             {lobbyState.lobbyPlayerIds.map((id) => (
               <div
-                className="bg-secondary p-3 border rounded-lg text-lg min-w-fit"
+                className="min-w-fit rounded-lg border bg-secondary p-3 text-lg"
                 key={id}
               >
-                <span className="font-semibold">
-                  {userNameCacheState[id]}:
-                </span>{" "}
+                <span className="font-semibold">{userNameCacheState[id]}:</span>{" "}
                 {lobbyPlayers[id]?.points}
               </div>
             ))}

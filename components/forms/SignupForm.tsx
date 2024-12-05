@@ -44,7 +44,7 @@ const SignUpForm = () => {
           form
             .handleSubmit(
               signUpActionTest,
-              onError
+              onError,
             )(e)
             .catch((e) => {
               console.log("Something went wrong");
@@ -59,10 +59,10 @@ const SignUpForm = () => {
       >
         <div>
           <h1 className="text-2xl font-medium">Sign up</h1>
-          <p className="text-sm text text-foreground">
+          <p className="text text-sm text-foreground">
             Already have an account?{" "}
             <Link
-              className="text-primary font-medium underline"
+              className="font-medium text-primary underline"
               href="/sign-in"
             >
               Sign in
