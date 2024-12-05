@@ -1,9 +1,9 @@
 import {
   SpellyLobbyRealtimePayloadT,
-  SpellyPrevRoundsRealtimePayloadT,
+  SpellyPrevRoundRealtimePayloadT,
 } from "@/types/realtime";
 import {
-  SpellyLobbyPrevRoundsT,
+  SpellyLobbyPrevRoundT,
   SpellyLobbySnakeToCamelCaseKeys,
   SpellyLobbyT,
   SpellyPrevRoundsSnakeToCamelCaseKeys,
@@ -33,10 +33,10 @@ export function LobbySnakeToCamelCase(
 }
 
 export function PrevRoundsSnakeToCamelCase(
-  prevRoundsPayload: SpellyPrevRoundsRealtimePayloadT
+  prevRoundsPayload: SpellyPrevRoundRealtimePayloadT
 ) {
   return snakeToCamelCase<
-    SpellyPrevRoundsRealtimePayloadT,
-    SpellyLobbyPrevRoundsT
+    SpellyPrevRoundRealtimePayloadT,
+    SpellyLobbyPrevRoundT
   >(prevRoundsPayload, SpellyPrevRoundsSnakeToCamelCaseKeys);
 }

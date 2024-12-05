@@ -5,7 +5,9 @@ import { db } from "..";
 import {
   lobbiesInSpelly,
   lobbyPlayersInSpelly,
+  lobbyPrevRoundsInSpelly,
   profilesInSpelly,
+  SpellyLobbyPrevRoundT,
 } from "../schema/spelly";
 
 export async function getUsers() {
@@ -90,4 +92,14 @@ export async function getLobbyInfoFromLobbyId(lobbyID: string) {
       .where(eq(lobbiesInSpelly.id, lobbyID))
       .limit(1)
   )?.[0];
+}
+
+export async function getLobbyPrevRounds(
+  lobbyID: string
+): Promise<SpellyLobbyPrevRoundT[]> {
+  return await db
+    .select()
+    .from(lobbyPrevRoundsInSpelly)
+    .where(eq(lobbyPrevRoundsInSpelly.lobbyId, lobbyID))
+    .orderBy(lobbyPrevRoundsInSpelly.timeAdded);
 }

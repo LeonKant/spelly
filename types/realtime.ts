@@ -146,7 +146,7 @@ export type Database = {
   };
 };
 
-export type SpellyPrevRoundsRealtimePayloadT =
+export type SpellyPrevRoundRealtimePayloadT =
   Database["spelly"]["Tables"]["lobby_prev_rounds"]["Row"];
 
 export type SpellyLobbyRealtimePayloadT =

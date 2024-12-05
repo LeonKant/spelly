@@ -1,10 +1,14 @@
+"use client";
 import {
   SpellyLobbyRealtimePayloadT,
-  SpellyPrevRoundsRealtimePayloadT,
+  SpellyPrevRoundRealtimePayloadT,
 } from "@/types/realtime";
-import { SpellyLobbyPrevRoundsT, SpellyLobbyT } from "@/db/schema/spelly";
+import { SpellyLobbyPrevRoundT, SpellyLobbyT } from "@/db/schema/spelly";
 import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby";
-import { LobbySnakeToCamelCase } from "@/utils/lobby";
+import {
+  LobbySnakeToCamelCase,
+  PrevRoundsSnakeToCamelCase,
+} from "@/utils/lobby";
 import { createClient } from "@/utils/supabase/client";
 import {
   RealtimeChannel,
@@ -25,17 +29,16 @@ type BaseSpellyContextT = {
   userID: string;
   userName: string;
   lobbyState: SpellyLobbyT;
-  prevRoundsState: SpellyLobbyPrevRoundsT;
+  prevRoundsState: SpellyLobbyPrevRoundT[];
 };
 
 type SpellyLobbyContextT = {
   lobbyPlayers: LobbyPlayersT<Partial<LobbyPlayerStatusT>>;
-  lobbyState: SpellyLobbyT;
   userNameCacheState: { [key: string]: string };
 } & BaseSpellyContextT;
 
 type SpellyLobbyContextPropsT = {
-  serverLobbyPlayers: LobbyPlayersT<LobbyPlayerStatusT>;
+  lobbyPlayers: LobbyPlayersT<LobbyPlayerStatusT>;
 } & BaseSpellyContextT;
 
 type ChannelUserStatusT = {
@@ -57,10 +60,10 @@ export const useSpellyLobby = () => {
   return context;
 };
 
-const SpellyLobbyProvider = ({
+export const SpellyLobbyProvider = ({
   userID,
   userName,
-  serverLobbyPlayers,
+  lobbyPlayers: serverLobbyPlayers,
   lobbyState: serverLobbyState,
   prevRoundsState: serverPrevRoundsState,
   children,
@@ -74,8 +77,9 @@ const SpellyLobbyProvider = ({
   const [lobbyState, setLobbyState] = useState<SpellyLobbyT>(serverLobbyState);
   const [lobbyPlayers, setLobbyPlayers] =
     useState<LobbyPlayersT<Partial<LobbyPlayerStatusT>>>(serverLobbyPlayers);
-  const [prevRoundsState, setPrevRoundsState] =
-    useState<SpellyLobbyPrevRoundsT>(serverPrevRoundsState);
+  const [prevRoundsState, setPrevRoundsState] = useState<
+    SpellyLobbyPrevRoundT[]
+  >(serverPrevRoundsState);
 
   const initUserNameCache = Object.entries(serverLobbyPlayers).reduce(
     (prev, [id, value]) => {
@@ -171,20 +175,19 @@ const SpellyLobbyProvider = ({
       .on(
         "postgres_changes",
         {
-          event: "UPDATE",
+          event: "INSERT",
           schema: "spelly",
           table: "lobby_prev_rounds",
           filter: `lobby_id=eq.${lobbyID}`,
         },
         (payload) => {
-          // const newLobbyState = LobbySnakeToCamelCase(
-          //   payload.new as LobbyRealtimePayloadT
-          // );
 
-          const testPayload = payload.new as SpellyPrevRoundsRealtimePayloadT;
-          console.log({ payload });
+          const newPrevRound = PrevRoundsSnakeToCamelCase(
+            payload.new as SpellyPrevRoundRealtimePayloadT
+          );
 
-          // setLobbyState(newLobbyState);
+          setPrevRoundsState((prev) => [...prev, newPrevRound]);
+
         }
       )
       .on("presence", { event: "sync" }, () => {

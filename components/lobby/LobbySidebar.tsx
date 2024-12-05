@@ -1,30 +1,28 @@
-import DeleteLobbyButton from "@/app/lobby/_components/DeleteLobbyButton";
+"use client";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { PrevRoundsList } from "./PrevRoundsList";
+import { useSpellyLobby } from "@/context/LobbyContext";
+import LobbySidebarHeader from "./LobbySidebarHeader";
+import { leaveGameAction } from "@/actions/lobby";
 
-// interface Props {
-//   lobbyID: string;
-// }
-
-export function LobbySidebar(
-// { lobbyID  }: Props
-) {
-
-  
+export function LobbySidebar() {
+  const {
+    userID,
+    lobbyState: { name: lobbyName, hostId, id: lobbyId },
+  } = useSpellyLobby();
   return (
     <Sidebar variant="floating">
+      <LobbySidebarHeader />
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-sm">
@@ -36,26 +34,28 @@ export function LobbySidebar(
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sm">
-            Game Options
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className="cursor-pointer text-base">
-                  <span>Leave Game</span>
-                </SidebarMenuButton>
+        <SidebarGroupLabel className="text-sm">Game Options</SidebarGroupLabel>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                className="cursor-pointer text-base"
+                onClick={() => leaveGameAction()}
+              >
+                <span>Leave Game</span>
+              </SidebarMenuButton>
+              {hostId === userID && (
                 <SidebarMenuButton
                   asChild
                   className="cursor-pointer text-base text-destructive"
                 >
                   <span>End Game</span>
                 </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+              )}
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroupContent>
       </SidebarFooter>
     </Sidebar>
   );

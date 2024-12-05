@@ -13,7 +13,7 @@ import { sql } from "drizzle-orm";
 import { usersInAuth } from "./auth";
 import {
   SpellyLobbyRealtimePayloadT,
-  SpellyPrevRoundsRealtimePayloadT,
+  SpellyPrevRoundRealtimePayloadT,
 } from "@/types/realtime";
 
 export const spelly = pgSchema("spelly");
@@ -115,6 +115,7 @@ export const lobbyPrevRoundsInSpelly = spelly.table(
     lobbyId: uuid("lobby_id").notNull(),
     gameState: text("game_state").notNull(),
     loserUserName: text("loser_user_name").notNull(),
+    timeAdded: timestamp("time_added", { mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
   },
   (table) => [
     foreignKey({
@@ -125,15 +126,14 @@ export const lobbyPrevRoundsInSpelly = spelly.table(
   ]
 );
 
-export type SpellyLobbyPrevRoundsT =
-  typeof lobbyPrevRoundsInSpelly.$inferSelect;
+export type SpellyLobbyPrevRoundT = typeof lobbyPrevRoundsInSpelly.$inferSelect;
 
 export const SpellyPrevRoundsSnakeToCamelCaseKeys: Record<
-  keyof SpellyPrevRoundsRealtimePayloadT,
-  keyof SpellyLobbyPrevRoundsT
+  keyof SpellyPrevRoundRealtimePayloadT,
+  keyof SpellyLobbyPrevRoundT
 > = {
-  game_state: "id",
-  id: "gameState",
+  id: "id",
   lobby_id: "lobbyId",
+  game_state: "gameState",
   loser_user_name: "loserUserName",
 };
