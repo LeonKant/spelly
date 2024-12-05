@@ -13,7 +13,7 @@ import {
 import { PrevRoundsList } from "./PrevRoundsList";
 import { useSpellyLobby } from "@/context/LobbyContext";
 import LobbySidebarHeader from "./LobbySidebarHeader";
-import { leaveGameAction } from "@/actions/lobby";
+import { hostEndGameAction, leaveGameAction } from "@/actions/lobby";
 
 export function LobbySidebar() {
   const {
@@ -49,6 +49,7 @@ export function LobbySidebar() {
                 <SidebarMenuButton
                   asChild
                   className="cursor-pointer text-base text-destructive"
+                  onClick={() => hostEndGameAction()}
                 >
                   <span>End Game</span>
                 </SidebarMenuButton>

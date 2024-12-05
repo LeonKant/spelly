@@ -42,7 +42,6 @@ export default function GameLobbyForm({ lobbyState, userID }: Props) {
           control={gameLobbyFormReturn.control}
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel className="text-xl">Game Input</FormLabel>
               <FormControl>
                 <div className="flex w-full rounded-md border-2 border-input bg-background px-3 py-2 ring-offset-background has-[:focus]:outline-none has-[:focus]:ring-2 has-[:focus]:ring-ring has-[:focus]:ring-offset-2 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 text-2xl items-center">
                   {gameState}
@@ -60,7 +59,11 @@ export default function GameLobbyForm({ lobbyState, userID }: Props) {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-fit text-lg">
+        <Button
+          type="submit"
+          className="w-fit text-lg"
+          disabled={!gameLobbyFormReturn.formState.isValid}
+        >
           Submit
         </Button>
       </form>

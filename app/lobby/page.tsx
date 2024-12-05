@@ -26,7 +26,7 @@ const LobbyPage = async () => {
   if (!userName) redirect("/");
 
   const lobbyInfo: SpellyLobbyT | undefined = await getLobbyInfoFromUserId(
-    user.id
+    user.id,
   );
   if (!lobbyInfo) redirect("/");
 
@@ -47,9 +47,7 @@ const LobbyPage = async () => {
     >
       <LobbySidebar />
       <DefaultWrapper>
-        {/* <div className="flex flex-1 max-w-screen-xl"> */}
-          <Lobby />
-        {/* </div> */}
+        <Lobby />
       </DefaultWrapper>
     </SpellyLobbyProvider>
   );
