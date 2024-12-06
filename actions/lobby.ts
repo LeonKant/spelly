@@ -1,18 +1,72 @@
 "use server";
 
 import { deleteLobby, deletePlayerFromLobby } from "@/db/queries/delete";
-import { addUserToLobby, initLobby } from "@/db/queries/insert";
 import {
+  addToPrevRounds,
+  addUserToLobby,
+  initLobby,
+} from "@/db/queries/insert";
+import {
+  checkWord,
   getLobbyInfoFromLobbyId,
   getLobbyInfoFromUserId,
 } from "@/db/queries/select";
+import { incrementPlayerPoints, updateLobbyState } from "@/db/queries/update";
+import { SpellyLobbyT } from "@/db/schema/spelly";
+import { gameLobbySchema } from "@/lib/form-schemas/GameLobbyScema";
 import { createClient } from "@/utils/supabase/server";
+import { User } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
+import { z } from "zod";
+
+type BaseGetUserAndLobbyInfoT = {
+  user?: User;
+  lobbyInfo?: SpellyLobbyT;
+  error: boolean;
+  message: string;
+};
+
+type GetUserAndLobbyInfoSuccessT = {
+  error: false;
+  user: User;
+  lobbyInfo: SpellyLobbyT;
+} & BaseGetUserAndLobbyInfoT;
+
+type GetUserAndLobbyInfoErrorT = {
+  error: true;
+} & BaseGetUserAndLobbyInfoT;
+
+const letters = "abcdefghijklmnopqrstuvwxyz";
 
 export async function createLobbyAction(lobbyName: string, userID: string) {
   await initLobby(lobbyName, userID);
   redirect("/lobby");
 }
+
+async function getUserAndLobbyInfo(): Promise<
+  GetUserAndLobbyInfoSuccessT | GetUserAndLobbyInfoErrorT
+> {
+  const error = true;
+  const message = "Success";
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // check if signed in
+  if (!!!user?.id) {
+    return { error, message: "User not signed in" };
+  }
+  // get lobby info from lobby_players
+  const lobbyInfo = await getLobbyInfoFromUserId(user.id);
+
+  // user not in game
+  if (!lobbyInfo) return { error, message: "User not in game" };
+
+  return { user, lobbyInfo, error: false, message };
+}
+
 export async function joinLobbyAction(lobbyID: string) {
   const supabase = await createClient();
 
@@ -41,23 +95,10 @@ export async function joinLobbyAction(lobbyID: string) {
   // redirect
   redirect("/lobby");
 }
+
 export async function hostEndGameAction() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // check if signed in
-  if (!!!user?.id) {
-    console.log("user not signed in");
-    return;
-  }
-  // get lobby info from lobby_players
-  const lobbyInfo = await getLobbyInfoFromUserId(user.id);
-
-  // user not in game
-  if (!lobbyInfo) return;
+  const { error, user, lobbyInfo } = await getUserAndLobbyInfo();
+  if (error) return;
   // user not host
   if (lobbyInfo.hostId !== user.id) return;
 
@@ -67,23 +108,70 @@ export async function hostEndGameAction() {
 }
 
 export async function leaveGameAction() {
-  console.log("action called");
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // check if signed in
-  if (!!!user?.id) return;
-
-  // get lobby info from lobby_players
-  const lobbyInfo = await getLobbyInfoFromUserId(user.id);
-
-  // user not in game
-  if (!lobbyInfo) return;
+  const { error, user, lobbyInfo } = await getUserAndLobbyInfo();
+  if (error) return;
 
   await deletePlayerFromLobby(user.id, lobbyInfo.id);
 
   redirect("/");
+}
+
+export async function startGameAction() {
+  const { error, user, lobbyInfo } = await getUserAndLobbyInfo();
+  if (error) return;
+
+  // user not host
+  if (lobbyInfo.hostId !== user.id) return;
+
+  await updateLobbyState(lobbyInfo.id, { gameStarted: true });
+}
+
+export async function playerTurnSubmitAction(
+  values: z.infer<typeof gameLobbySchema>,
+) {
+  const { error, user, lobbyInfo } = await getUserAndLobbyInfo();
+  if (error) return;
+
+  const { gameInput } = values;
+  const {
+    gameState,
+    currentPlayer,
+    lobbyPlayerIds,
+    currentLetter,
+    id: lobbyId,
+  } = lobbyInfo;
+
+  const newWord = `${gameState}${gameInput}`;
+  const wordExists = await checkWord(newWord);
+
+  if (wordExists) {
+    // assign state to be new word, change player
+    await updateLobbyState(lobbyInfo.id, {
+      gameState: newWord,
+      currentPlayer: (currentPlayer + 1) % lobbyPlayerIds.length,
+    });
+    return;
+  }
+  // if word doesn't exist, increase current letter
+  const nextLetter = currentLetter + 1;
+
+  // if letter is 'z', game over
+  if (nextLetter >= 26) {
+    await updateLobbyState(lobbyInfo.id, {
+      gameOver: true,
+    });
+    return;
+  }
+
+  // if word doesn't exist, increase current letter, change player, increase of player points,
+  // add to prev rounds
+  await updateLobbyState(lobbyInfo.id, {
+    gameState: letters[nextLetter],
+    currentLetter: nextLetter,
+    currentPlayer: (currentPlayer + 1) % lobbyPlayerIds.length,
+  });
+
+  await incrementPlayerPoints(user.id, lobbyInfo.id);
+
+  await addToPrevRounds(user.id, { gameState: newWord, lobbyId });
 }
