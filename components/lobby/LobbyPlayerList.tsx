@@ -8,7 +8,13 @@ import {
 } from "../ui/accordion";
 
 export function LobbyPlayerList() {
-  const { lobbyState, userNameCacheState, lobbyPlayers } = useSpellyLobby();
+  const {
+    lobbyState: { lobbyPlayerIds, currentPlayer },
+    userNameCacheState,
+    lobbyPlayers,
+  } = useSpellyLobby();
+
+  const currentPlayerId = lobbyPlayerIds[currentPlayer];
 
   return (
     <Accordion
@@ -16,20 +22,21 @@ export function LobbyPlayerList() {
       collapsible
       defaultValue="player-names"
       title="lobby-players"
+      className="max-w-md w-full"
     >
       <AccordionItem value="player-names">
         <AccordionTrigger className="hover:no-underline">
           <div className="flex-1 text-center text-xl">Players</div>
         </AccordionTrigger>
-        <AccordionContent className="gap-4">
+        <AccordionContent>
           <div className="flex flex-col gap-4">
-            {lobbyState.lobbyPlayerIds.map((id) => (
+            {lobbyPlayerIds.map((id) => (
               <div
-                className="min-w-fit rounded-lg border bg-secondary p-3 text-lg"
+                className={`flex min-w-fit gap-1 rounded-lg border px-6 ${currentPlayerId === id && "bg-secondary"} justify-between p-3 text-lg`}
                 key={id}
               >
-                <span className="font-semibold">{userNameCacheState[id]}:</span>{" "}
-                {lobbyPlayers[id]?.points}
+                <span className="font-semibold">{userNameCacheState[id]}:</span>
+                <span>{lobbyPlayers[id]?.points}</span>
               </div>
             ))}
           </div>
