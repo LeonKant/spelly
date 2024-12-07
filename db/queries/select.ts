@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, like, or } from "drizzle-orm";
 import { db } from "..";
 import {
   lobbiesInSpelly,
@@ -8,6 +8,7 @@ import {
   lobbyPrevRoundsInSpelly,
   profilesInSpelly,
   SpellyLobbyPrevRoundT,
+  wordsInSpelly,
 } from "../schema/spelly";
 
 export async function getUsers() {
@@ -102,4 +103,16 @@ export async function getLobbyPrevRounds(
     .from(lobbyPrevRoundsInSpelly)
     .where(eq(lobbyPrevRoundsInSpelly.lobbyId, lobbyID))
     .orderBy(lobbyPrevRoundsInSpelly.timeAdded);
+}
+
+// check if word exists in database
+export async function checkWord(newWord: string): Promise<boolean> {
+  return (
+    (
+      await db
+        .select()
+        .from(wordsInSpelly)
+        .where(like(wordsInSpelly.word, `${newWord}%`))
+    ).length > 0
+  );
 }
