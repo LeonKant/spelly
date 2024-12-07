@@ -1,7 +1,13 @@
 "use server";
 
 import { db } from "..";
-import { lobbiesInSpelly, lobbyPlayersInSpelly } from "../schema/spelly";
+import {
+  lobbiesInSpelly,
+  lobbyPlayersInSpelly,
+  lobbyPrevRoundsInSpelly,
+  SpellyLobbyPrevRoundInsertT,
+} from "../schema/spelly";
+import { getUserName } from "./select";
 
 export async function initLobby(lobbyName: string, userID: string) {
   await db.insert(lobbiesInSpelly).values({
@@ -16,4 +22,17 @@ export async function addUserToLobby(lobbyID: string, userID: string) {
     userId: userID,
     lobbyId: lobbyID,
   });
+}
+
+// insert to lobby_prev_rounds table
+export async function addToPrevRounds(
+  userId: string,
+  values: Omit<
+    SpellyLobbyPrevRoundInsertT,
+    "id" | "timeAdded" | "loserUserName"
+  >,
+) {
+  const loserUserName = (await getUserName(userId)) ?? "";
+
+  await db.insert(lobbyPrevRoundsInSpelly).values({ ...values, loserUserName });
 }
