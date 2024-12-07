@@ -27,7 +27,7 @@ export function LobbySnakeToCamelCase(
   lobbyPayload: SpellyLobbyRealtimePayloadT,
 ): SpellyLobbyT {
   return snakeToCamelCase<SpellyLobbyRealtimePayloadT, SpellyLobbyT>(
-    lobbyPayload,
+    lobbyPayload satisfies SpellyLobbyRealtimePayloadT,
     SpellyLobbySnakeToCamelCaseKeys,
   );
 }
@@ -38,5 +38,8 @@ export function PrevRoundsSnakeToCamelCase(
   return snakeToCamelCase<
     SpellyPrevRoundRealtimePayloadT,
     SpellyLobbyPrevRoundT
-  >(prevRoundsPayload, SpellyPrevRoundsSnakeToCamelCaseKeys);
+  >(
+    prevRoundsPayload satisfies SpellyPrevRoundRealtimePayloadT,
+    SpellyPrevRoundsSnakeToCamelCaseKeys,
+  );
 }
