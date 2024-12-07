@@ -8,6 +8,7 @@ import {
   boolean,
   timestamp,
   primaryKey,
+  serial,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { usersInAuth } from "./auth";
@@ -47,6 +48,7 @@ export const lobbiesInSpelly = spelly.table(
     currentPlayer: integer("current_player").default(0).notNull(),
     gameState: text("game_state").default("").notNull(),
     gameStarted: boolean("game_started").default(false).notNull(),
+    gameOver: boolean("game_over").default(false).notNull(),
     name: text().default("lobby").notNull(),
     lobbyPlayerIds: uuid("lobby_player_ids").array().default([""]).notNull(),
   },
@@ -60,7 +62,6 @@ export const lobbiesInSpelly = spelly.table(
 );
 
 export type SpellyLobbyInsertT = typeof lobbiesInSpelly.$inferInsert;
-
 export type SpellyLobbyT = typeof lobbiesInSpelly.$inferSelect;
 
 export const SpellyLobbySnakeToCamelCaseKeys: Record<
@@ -74,6 +75,7 @@ export const SpellyLobbySnakeToCamelCaseKeys: Record<
   game_state: "gameState",
   game_started: "gameStarted",
   name: "name",
+  game_over: "gameOver",
   lobby_player_ids: "lobbyPlayerIds",
 };
 
@@ -129,6 +131,8 @@ export const lobbyPrevRoundsInSpelly = spelly.table(
 );
 
 export type SpellyLobbyPrevRoundT = typeof lobbyPrevRoundsInSpelly.$inferSelect;
+export type SpellyLobbyPrevRoundInsertT =
+  typeof lobbyPrevRoundsInSpelly.$inferInsert;
 
 export const SpellyPrevRoundsSnakeToCamelCaseKeys: Record<
   keyof SpellyPrevRoundRealtimePayloadT,
@@ -138,4 +142,10 @@ export const SpellyPrevRoundsSnakeToCamelCaseKeys: Record<
   lobby_id: "lobbyId",
   game_state: "gameState",
   loser_user_name: "loserUserName",
+  time_added: "timeAdded",
 };
+
+export const wordsInSpelly = spelly.table("words", {
+  id: serial().primaryKey().notNull(),
+  word: text().notNull(),
+});

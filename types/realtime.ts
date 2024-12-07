@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           current_letter: number;
           current_player: number;
+          game_over: boolean;
           game_started: boolean;
           game_state: string;
           host_id: string;
@@ -23,6 +24,7 @@ export type Database = {
         Insert: {
           current_letter?: number;
           current_player?: number;
+          game_over?: boolean;
           game_started?: boolean;
           game_state?: string;
           host_id: string;
@@ -33,6 +35,7 @@ export type Database = {
         Update: {
           current_letter?: number;
           current_player?: number;
+          game_over?: boolean;
           game_started?: boolean;
           game_state?: string;
           host_id?: string;
@@ -92,18 +95,21 @@ export type Database = {
           id: string;
           lobby_id: string;
           loser_user_name: string;
+          time_added: string;
         };
         Insert: {
           game_state: string;
           id?: string;
           lobby_id: string;
           loser_user_name: string;
+          time_added?: string;
         };
         Update: {
           game_state?: string;
           id?: string;
           lobby_id?: string;
           loser_user_name?: string;
+          time_added?: string;
         };
         Relationships: [
           {
@@ -127,6 +133,21 @@ export type Database = {
         Update: {
           id?: string;
           username?: string | null;
+        };
+        Relationships: [];
+      };
+      words: {
+        Row: {
+          id: number;
+          word: string;
+        };
+        Insert: {
+          id?: number;
+          word: string;
+        };
+        Update: {
+          id?: number;
+          word?: string;
         };
         Relationships: [];
       };
