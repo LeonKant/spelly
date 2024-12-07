@@ -109,19 +109,25 @@ export const SpellyLobbyProvider = ({
           [key: string]: any;
         }>,
   ) => {
-    if (payload?.new?.points < 0) {
+    const { points, user_id } = payload.new;
+
+    if (points < 0) {
       console.log("User points not found");
       return;
     }
 
-    if (!!!payload?.new?.user_id) {
+    if (!!!user_id) {
       console.log("User id not found");
       return;
     }
 
     setLobbyPlayers((prev) => {
-      prev[payload.new.user_id] = { points: payload.new.points };
-      return prev;
+      const newPlayers = { ...prev };
+      newPlayers[user_id] = {
+        ...newPlayers[user_id],
+        points: payload.new.points,
+      };
+      return newPlayers;
     });
   };
 
@@ -149,6 +155,7 @@ export const SpellyLobbyProvider = ({
           const newLobbyState = LobbySnakeToCamelCase(
             payload.new as SpellyLobbyRealtimePayloadT,
           );
+
           setLobbyState(newLobbyState);
         },
       )
@@ -199,7 +206,7 @@ export const SpellyLobbyProvider = ({
           return status;
         });
 
-        setChannelUsersState(users);
+        // setChannelUsersState(users);
 
         console.log("Synced presence state: ", channel.presenceState());
       })
