@@ -35,8 +35,6 @@ const LobbyPage = async () => {
 
   const prevRounds = await getLobbyPrevRounds(lobbyInfo.id);
 
-  // const isHost = lobbyInfo.hostId === user.id;
-
   return (
     <SpellyLobbyProvider
       userID={user.id}
