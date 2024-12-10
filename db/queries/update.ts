@@ -17,7 +17,8 @@ export async function updateLobbyState(
 }
 
 export async function incrementPlayerPoints(userId: string, lobbyId: string) {
-  await db.update(lobbyPlayersInSpelly)
+  await db
+    .update(lobbyPlayersInSpelly)
     .set({
       points: sql`${lobbyPlayersInSpelly.points} + 1`,
     })
@@ -27,4 +28,13 @@ export async function incrementPlayerPoints(userId: string, lobbyId: string) {
         eq(lobbyPlayersInSpelly.lobbyId, lobbyId),
       ),
     );
+}
+
+export async function resetLobbyPlayerPoints(lobbyId: string) {
+  await db
+    .update(lobbyPlayersInSpelly)
+    .set({
+      points: 0,
+    })
+    .where(and(eq(lobbyPlayersInSpelly.lobbyId, lobbyId)));
 }
