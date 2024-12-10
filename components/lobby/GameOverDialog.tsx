@@ -13,6 +13,11 @@ import { Button } from "../ui/button";
 
 import { useSpellyLobby } from "@/context/LobbyContext";
 import { useEffect, useState } from "react";
+import {
+  hostEndGameAction,
+  hostResetGameAction,
+  leaveGameAction,
+} from "@/actions/lobby";
 
 export function GameOverDialog() {
   const [gameOverMessage, setGameOverMessage] = useState<string | null>(null);
@@ -21,6 +26,7 @@ export function GameOverDialog() {
     lobbyState: { gameOver },
     lobbyPlayers,
     userNameCacheState,
+    isHost,
   } = useSpellyLobby();
 
   useEffect(() => {
@@ -67,16 +73,33 @@ export function GameOverDialog() {
           <DialogTitle>Game Over</DialogTitle>
           <DialogDescription>{gameOverMessage}</DialogDescription>
         </DialogHeader>
-        <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
+        <DialogFooter className="flex-col gap-4 sm:justify-start sm:gap-0">
+          {isHost ? (
+            <>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => hostResetGameAction()}
+              >
+                Play Again
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={() => hostEndGameAction()}
+              >
+                End Game
+              </Button>
+            </>
+          ) : (
             <Button
               type="button"
               variant="secondary"
-              onClick={() => setOpenDialog(false)}
+              onClick={() => leaveGameAction()}
             >
-              Continue
+              Leave Game
             </Button>
-          </DialogClose>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
