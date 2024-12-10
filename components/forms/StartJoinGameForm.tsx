@@ -50,7 +50,7 @@ export default function StartJoinGameForm({ userID }: Props) {
     defaultValues: {
       lobbyID: "",
     },
-    mode: "onChange",
+    mode: "onSubmit",
   });
 
   if (startGameState) {
@@ -105,6 +105,7 @@ export default function StartJoinGameForm({ userID }: Props) {
                 <FormControl>
                   <Input {...field}></Input>
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -128,10 +129,10 @@ export default function StartJoinGameForm({ userID }: Props) {
   return (
     <div className="flex flex-col gap-4">
       <Button className="text-lg" onClick={() => setStartGameState(true)}>
-        Start Game
+        Create Lobby
       </Button>
       <Button className="text-lg" onClick={() => setJoinGameState(true)}>
-        Join Game
+        Join Lobby
       </Button>
     </div>
   );

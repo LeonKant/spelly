@@ -5,5 +5,5 @@ export const startGameSchema = z.object({
 });
 
 export const joinGameSchema = z.object({
-  lobbyID: z.string(),
+  lobbyID: z.string().uuid("Invalid Lobby ID"),
 });
