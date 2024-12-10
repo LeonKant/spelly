@@ -25,6 +25,7 @@ export default function GameLobbyForm() {
       currentPlayer,
       gameStarted,
       hostId,
+      gameOver,
     },
   } = useSpellyLobby();
 
@@ -49,7 +50,7 @@ export default function GameLobbyForm() {
   return (
     <Form {...gameLobbyFormReturn}>
       <form
-        className="mx-1 flex flex-col items-center gap-4"
+        className="mx-1 flex flex-col items-center gap-4 max-w-screen-md"
         autoComplete="off"
         onSubmit={gameLobbyFormReturn.handleSubmit(playerTurnSubmitAction)}
       >
@@ -63,7 +64,7 @@ export default function GameLobbyForm() {
                   {gameState}
                   <input
                     inputMode="text"
-                    disabled={!currentUserTurn || !gameStarted}
+                    disabled={!currentUserTurn || !gameStarted || gameOver}
                     ref={(e) => {
                       ref(e);
                       inputRef.current = e;
