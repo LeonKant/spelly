@@ -4,7 +4,13 @@ import {
   SpellyPrevRoundRealtimePayloadT,
 } from "@/types/realtime";
 import { SpellyLobbyPrevRoundT, SpellyLobbyT } from "@/db/schema/spelly";
-import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby";
+import {
+  ChannelUserStatusT,
+  LobbyPlayersT,
+  LobbyPlayerStatusT,
+  SpellyLobbyContextPropsT,
+  SpellyLobbyContextT,
+} from "@/types/lobby-context";
 import {
   LobbySnakeToCamelCase,
   PrevRoundsSnakeToCamelCase,
@@ -17,36 +23,13 @@ import {
 } from "@supabase/supabase-js";
 import {
   createContext,
-  MutableRefObject,
   PropsWithChildren,
   useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
-
-type BaseSpellyContextT = {
-  userID: string;
-  userName: string;
-  lobbyState: SpellyLobbyT;
-  prevRoundsState: SpellyLobbyPrevRoundT[];
-};
-
-type SpellyLobbyContextT = {
-  isHost: boolean;
-  lobbyPlayers: LobbyPlayersT<Partial<LobbyPlayerStatusT>>;
-  userNameCacheState: { [key: string]: string };
-} & BaseSpellyContextT;
-
-type SpellyLobbyContextPropsT = {
-  lobbyPlayers: LobbyPlayersT<LobbyPlayerStatusT>;
-} & BaseSpellyContextT;
-
-type ChannelUserStatusT = {
-  id: string;
-  userName: string;
-  online_at: string;
-};
+import { redirect } from "next/navigation";
 
 const SpellyLobbyContext = createContext<SpellyLobbyContextT | null>(null);
 
@@ -71,6 +54,8 @@ export const SpellyLobbyProvider = ({
 }: SpellyLobbyContextPropsT & PropsWithChildren) => {
   const supabase = createClient();
   const { id: lobbyID } = serverLobbyState;
+
+  const [subscriptionWaiting, setSubscriptionWaiting] = useState<boolean>(true);
   const [lobbyState, setLobbyState] = useState<SpellyLobbyT>(serverLobbyState);
   const [lobbyPlayers, setLobbyPlayers] =
     useState<LobbyPlayersT<Partial<LobbyPlayerStatusT>>>(serverLobbyPlayers);
@@ -208,6 +193,9 @@ export const SpellyLobbyProvider = ({
       .on("broadcast", { event: "reset-game" }, () => {
         setPrevRoundsState([]);
       })
+      .on("broadcast", { event: "end-game" }, () => {
+        redirect("/");
+      })
       .on("presence", { event: "join" }, ({ key, newPresences }) => {
         console.log("join", key, newPresences);
 
@@ -219,35 +207,31 @@ export const SpellyLobbyProvider = ({
           });
         }
       })
-      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
-        console.log("leave", key, leftPresences);
-      })
+      // .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+      //   console.log("leave", key, leftPresences);
+      // })
       .subscribe(async (status, err) => {
         if (status === "SUBSCRIBED") {
-          console.log("Connected!");
           setErrorTest(null);
         }
 
         if (status === "CHANNEL_ERROR") {
-          console.log(
-            `There was an error subscribing to channel: ${err?.message}`,
-          );
           setErrorTest(
             `There was an error subscribing to channel: ${err?.message}`,
           );
         }
 
         if (status === "TIMED_OUT") {
-          console.log("Realtime server did not respond in time.");
           setErrorTest(`"Realtime server did not respond in time."`);
         }
 
         if (status === "CLOSED") {
-          console.log("Realtime channel was unexpectedly closed.");
           setErrorTest(`"Realtime channel was unexpectedly closed."`);
         }
-        const presenceTrackStatus = await channel.track(userStatus);
-        console.log(presenceTrackStatus);
+
+        setSubscriptionWaiting(false);
+        // const presenceTrackStatus = await channel.track(userStatus);
+        // console.log(presenceTrackStatus);
       });
     return () => {
       supabase.removeChannel(channel);
@@ -261,6 +245,7 @@ export const SpellyLobbyProvider = ({
   return (
     <SpellyLobbyContext.Provider
       value={{
+        subscriptionWaiting,
         userID,
         lobbyState,
         userName,
