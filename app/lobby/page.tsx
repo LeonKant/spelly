@@ -9,7 +9,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Lobby from "../../components/lobby/Lobby";
 import { SpellyLobbyT } from "@/db/schema/spelly";
-import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby";
+import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby-context";
 import { LobbySidebar } from "@/components/lobby/LobbySidebar";
 import DefaultWrapper from "@/components/DefaultWrapper";
 import { SpellyLobbyProvider } from "@/context/LobbyContext";
