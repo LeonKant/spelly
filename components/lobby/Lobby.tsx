@@ -12,7 +12,7 @@ export default function Lobby() {
       <div className={`min-w-fit basis-1/5`}>
         <SidebarTrigger className="[&_svg]:shrink-1 min-h-fit min-w-fit p-2 text-lg [&_svg]:size-8" />
       </div>
-      <div className="my-8 flex w-full basis-3/5 flex-col justify-center">
+      <div className="my-8 flex w-full basis-3/5 flex-col justify-center items-center">
         <GameLobbyForm />
         <GameOverDialog />
       </div>

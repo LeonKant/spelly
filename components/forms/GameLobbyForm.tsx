@@ -50,7 +50,7 @@ export default function GameLobbyForm() {
   return (
     <Form {...gameLobbyFormReturn}>
       <form
-        className="mx-1 flex flex-col items-center gap-4 max-w-screen-md"
+        className="flex w-full md:max-w-screen-md max-w-screen-sm flex-col items-center gap-4"
         autoComplete="off"
         onSubmit={gameLobbyFormReturn.handleSubmit(playerTurnSubmitAction)}
       >
