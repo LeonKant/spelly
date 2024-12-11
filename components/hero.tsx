@@ -31,7 +31,7 @@ export default async function Hero() {
             {gameAlreadyStarted ? (
               <RejoinGameButton />
             ) : (
-              <StartJoinGameForm userID={user.id} />
+              <StartJoinGameForm />
             )}
           </div>
         )}

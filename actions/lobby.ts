@@ -56,11 +56,6 @@ const initLobbyState: Partial<SpellyLobbyT> = {
 
 const letters = "abcdefghijklmnopqrstuvwxyz";
 
-export async function createLobbyAction(lobbyName: string, userID: string) {
-  await initLobby(lobbyName, userID);
-  redirect("/lobby");
-}
-
 async function getClientAndLobbyInfo(): Promise<
   GetClientAndLobbyInfoSuccessT | GetClientAndLobbyInfoErrorT
 > {
@@ -83,6 +78,21 @@ async function getClientAndLobbyInfo(): Promise<
   if (!lobbyInfo) return { error, message: "User not in game" };
 
   return { user, lobbyInfo, error: false, message, supabase };
+}
+
+export async function createLobbyAction(lobbyName: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // check if signed in
+  if (!!!user?.id) {
+    throw new Error();
+  }
+
+  await initLobby(lobbyName, user.id);
+  redirect("/lobby");
 }
 
 export async function joinLobbyAction(lobbyID: string) {
@@ -113,21 +123,27 @@ export async function joinLobbyAction(lobbyID: string) {
   // insert into lobby_players table
   await addUserToLobby(lobbyID, user.id);
 
-  console.log("user inserted into lobby_players table");
-
   // redirect
   redirect("/lobby");
 }
 
 export async function hostEndGameAction() {
-  const { error, user, lobbyInfo } = await getClientAndLobbyInfo();
+  const { error, user, lobbyInfo, supabase } = await getClientAndLobbyInfo();
   if (error) return;
   // user not host
   if (lobbyInfo.hostId !== user.id) return;
 
   await deleteLobby(lobbyInfo.id);
 
-  redirect("/");
+  const channel = supabase.channel(`lobby-${lobbyInfo.id}`);
+
+  channel.send({
+    type: "broadcast",
+    event: "end-game",
+    payload: {},
+  });
+
+  supabase.removeChannel(channel);
 }
 
 export async function hostResetGameAction() {
@@ -142,13 +158,11 @@ export async function hostResetGameAction() {
 
   const channel = supabase.channel(`lobby-${lobbyInfo.id}`);
 
-  channel
-    .send({
-      type: "broadcast",
-      event: "reset-game",
-      payload: {},
-    })
-    .then((resp) => console.log(resp));
+  channel.send({
+    type: "broadcast",
+    event: "reset-game",
+    payload: {},
+  });
 
   supabase.removeChannel(channel);
 }

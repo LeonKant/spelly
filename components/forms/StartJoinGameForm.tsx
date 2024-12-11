@@ -18,15 +18,10 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { initLobby } from "@/db/queries/insert";
 import { createLobbyAction, joinLobbyAction } from "@/actions/lobby";
-import { getLobbyInfoFromLobbyId } from "@/db/queries/select";
 
-interface Props {
-  userID: string;
-}
 
-export default function StartJoinGameForm({ userID }: Props) {
+export default function StartJoinGameForm() {
   const [startGameState, setStartGameState] = useState<boolean>(false);
   const [joinGameState, setJoinGameState] = useState<boolean>(false);
 
@@ -39,7 +34,7 @@ export default function StartJoinGameForm({ userID }: Props) {
   });
 
   const startGameSubmit = async (values: z.infer<typeof startGameSchema>) => {
-    createLobbyAction(values.lobbyName, userID);
+    createLobbyAction(values.lobbyName);
   };
   const joinGameSubmit = async (values: z.infer<typeof joinGameSchema>) => {
     joinLobbyAction(values.lobbyID);
