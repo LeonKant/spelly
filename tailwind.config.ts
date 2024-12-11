@@ -85,10 +85,39 @@ const config = {
             height: "0",
           },
         },
+        "fade-in": {
+          from: {
+            opacity: "0",
+          },
+          to: {
+            opacity: "100",
+          },
+        },
+        "slide-in": {
+          from: {
+            transform: "translateX(1.5rem)",
+          },
+          to: {
+            transform: "0",
+          },
+        },
+        "fade-slide-in": {
+          from: {
+            transform: "translateX(1.5rem)",
+            opacity: "0",
+          },
+          to: {
+            transform: "0",
+            opacity: "100",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in": "fade-in .2s ease-out",
+        "slide-in": "slide-in .5s ease-out",
+        "fade-slide-in": "fade-slide-in .5s ease-out",
       },
     },
   },

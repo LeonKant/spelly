@@ -18,7 +18,7 @@ export default async function Hero() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-16">
+    <div className="flex flex-col items-center gap-16 animate-fade-slide-in">
       <div className="flex flex-col items-center gap-16">
         <h1 className="text-6xl font-bold lg:text-7xl">Spelly</h1>
         <p className="mx-auto max-w-xl text-center text-3xl !leading-tight text-muted-foreground lg:text-4xl">
