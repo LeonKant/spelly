@@ -7,11 +7,11 @@ import {
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Lobby from "../../components/lobby/Lobby";
-import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby-context";
+import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby-context.type";
 import { LobbySidebar } from "@/components/lobby/LobbySidebar";
 import DefaultWrapper from "@/components/DefaultWrapper";
 import { SpellyLobbyProvider } from "@/context/LobbyContext";
-import { SpellyLobbyT } from "@/types/db";
+import { SpellyLobbyT } from "@/types/db.type";
 
 const LobbyPage = async () => {
   const supabase = await createClient();

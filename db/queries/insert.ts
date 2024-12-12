@@ -1,6 +1,6 @@
 "use server";
 
-import { SpellyLobbyPrevRoundInsertT } from "@/types/db";
+import { SpellyLobbyPrevRoundInsertT } from "@/types/db.type";
 import { db } from "..";
 import {
   lobbiesInSpelly,

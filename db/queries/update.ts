@@ -1,14 +1,13 @@
+"use server";
+
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "..";
-import {
-  lobbiesInSpelly,
-  lobbyPlayersInSpelly,
-  SpellyLobbyT,
-} from "../schema/spelly";
+import { lobbiesInSpelly, lobbyPlayersInSpelly } from "../schema/spelly";
+import { LobbyInfoUpdateT } from "@/types/db.type";
 
 export async function updateLobbyState(
   lobbyId: string,
-  lobbyInfo: Omit<Partial<SpellyLobbyT>, "hostId" | "id" | "lobbyPlayerIds">,
+  lobbyInfo: LobbyInfoUpdateT,
 ) {
   await db
     .update(lobbiesInSpelly)

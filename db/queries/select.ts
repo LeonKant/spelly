@@ -9,7 +9,7 @@ import {
   profilesInSpelly,
   wordsInSpelly,
 } from "../schema/spelly";
-import { SpellyLobbyPrevRoundT, SpellyLobbyT } from "@/types/db";
+import { SpellyLobbyPrevRoundT, SpellyLobbyT } from "@/types/db.type";
 
 export async function getUserName(userId: string): Promise<string | null> {
   return (

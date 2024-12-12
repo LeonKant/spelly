@@ -12,10 +12,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { usersInAuth } from "./auth";
-import {
-  SpellyLobbyRealtimePayloadT,
-  SpellyPrevRoundRealtimePayloadT,
-} from "@/types/realtime";
 
 export const spelly = pgSchema("spelly");
 
@@ -33,8 +29,6 @@ export const profilesInSpelly = spelly.table(
     }).onDelete("cascade"),
   ],
 );
-
-export type SpellyProfileT = typeof profilesInSpelly.$inferSelect;
 
 export const lobbiesInSpelly = spelly.table(
   "lobbies",
@@ -60,24 +54,6 @@ export const lobbiesInSpelly = spelly.table(
     }),
   ],
 );
-
-export type SpellyLobbyInsertT = typeof lobbiesInSpelly.$inferInsert;
-export type SpellyLobbyT = typeof lobbiesInSpelly.$inferSelect;
-
-export const SpellyLobbySnakeToCamelCaseKeys: Record<
-  keyof SpellyLobbyRealtimePayloadT,
-  keyof SpellyLobbyT
-> = {
-  id: "id",
-  host_id: "hostId",
-  current_letter: "currentLetter",
-  current_player: "currentPlayer",
-  game_state: "gameState",
-  game_started: "gameStarted",
-  name: "name",
-  game_over: "gameOver",
-  lobby_player_ids: "lobbyPlayerIds",
-};
 
 export const lobbyPlayersInSpelly = spelly.table(
   "lobby_players",
@@ -129,21 +105,6 @@ export const lobbyPrevRoundsInSpelly = spelly.table(
     }).onDelete("cascade"),
   ],
 );
-
-export type SpellyLobbyPrevRoundT = typeof lobbyPrevRoundsInSpelly.$inferSelect;
-export type SpellyLobbyPrevRoundInsertT =
-  typeof lobbyPrevRoundsInSpelly.$inferInsert;
-
-export const SpellyPrevRoundsSnakeToCamelCaseKeys: Record<
-  keyof SpellyPrevRoundRealtimePayloadT,
-  keyof SpellyLobbyPrevRoundT
-> = {
-  id: "id",
-  lobby_id: "lobbyId",
-  game_state: "gameState",
-  loser_user_name: "loserUserName",
-  time_added: "timeAdded",
-};
 
 export const wordsInSpelly = spelly.table("words", {
   id: serial().primaryKey().notNull(),

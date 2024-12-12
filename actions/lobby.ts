@@ -21,13 +21,13 @@ import {
   updateLobbyState,
 } from "@/db/queries/update";
 import { gameLobbySchema } from "@/lib/form-schemas/GameLobbyScema";
-import { LobbyInfoUpdateT, SpellyLobbyT } from "@/types/db";
+import { LobbyInfoUpdateT, SpellyLobbyT } from "@/types/db.type";
 import {
   ActionResponse,
   ClientAndLobbyInfoT,
   ClientInfoT,
   WithoutErrorParamsT,
-} from "@/types/lobby-actions";
+} from "@/types/lobby-actions.type";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { z } from "zod";

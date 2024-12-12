@@ -3,11 +3,11 @@ import {
   SpellyLobbySnakeToCamelCaseKeys,
   SpellyLobbyT,
   SpellyPrevRoundsSnakeToCamelCaseKeys,
-} from "@/types/db";
+} from "@/types/db.type";
 import {
   SpellyLobbyRealtimePayloadT,
   SpellyPrevRoundRealtimePayloadT,
-} from "@/types/realtime";
+} from "@/types/realtime.type";
 
 function snakeToCamelCase<
   RealTimeT extends Record<string, any>,
