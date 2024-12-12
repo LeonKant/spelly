@@ -28,12 +28,16 @@ export default function LobbySidebarHeader() {
 
   const handleIdClick = () => {
     navigator.clipboard.writeText(lobbyId);
-    toast({ title: "Lobby ID copied!" });
+    const { dismiss } = toast({ title: "Lobby ID copied!" });
+
+    setTimeout(() => dismiss(), 2 * 1000);
   };
 
   const handleLinkClick = () => {
     navigator.clipboard.writeText(joinLink);
-    toast({ title: "Join Link copied!" });
+    const { dismiss } = toast({ title: "Join Link copied!" });
+
+    setTimeout(() => dismiss(), 2 * 1000);
   };
 
   return (
