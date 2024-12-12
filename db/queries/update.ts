@@ -1,7 +1,7 @@
 "use server";
 
 import { and, eq, sql } from "drizzle-orm";
-import { db } from "..";
+import { db } from "../../config/db.config";
 import { lobbiesInSpelly, lobbyPlayersInSpelly } from "../schema/spelly";
 import { LobbyInfoUpdateT } from "@/types/db.type";
 
