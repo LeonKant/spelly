@@ -17,7 +17,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import signUpSchema from "@/lib/form-schemas/SignUpSchema";
 import Link from "next/link";
-import { signUpActionTest } from "@/app/actions";
+import { signUpActionTest } from "@/actions/form";
 import { useToast } from "@/hooks/use-toast";
 
 const SignUpForm = () => {
