@@ -2,15 +2,14 @@
 import {
   SpellyLobbyRealtimePayloadT,
   SpellyPrevRoundRealtimePayloadT,
-} from "@/types/realtime";
-import { SpellyLobbyPrevRoundT, SpellyLobbyT } from "@/db/schema/spelly";
+} from "@/types/realtime.type";
 import {
   ChannelUserStatusT,
   LobbyPlayersT,
   LobbyPlayerStatusT,
   SpellyLobbyContextPropsT,
   SpellyLobbyContextT,
-} from "@/types/lobby-context";
+} from "@/types/lobby-context.type";
 import {
   LobbySnakeToCamelCase,
   PrevRoundsSnakeToCamelCase,
@@ -30,6 +29,7 @@ import {
   useState,
 } from "react";
 import { redirect } from "next/navigation";
+import { SpellyLobbyPrevRoundT, SpellyLobbyT } from "@/types/db.type";
 
 const SpellyLobbyContext = createContext<SpellyLobbyContextT | null>(null);
 
@@ -112,12 +112,10 @@ export const SpellyLobbyProvider = ({
       return newPlayers;
     });
   };
-  const [errorTest, setErrorTest] = useState<null | string>(null);
 
   useEffect(() => {
     channelRef.current = supabase.channel(`lobby-${lobbyID}`, {
       config: {
-        // private: true,
         presence: {
           key: userID,
         },
@@ -207,29 +205,11 @@ export const SpellyLobbyProvider = ({
           });
         }
       })
-      // .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
-      //   console.log("leave", key, leftPresences);
-      // })
       .subscribe(async (status, err) => {
         if (status === "SUBSCRIBED") {
-          setErrorTest(null);
+          setSubscriptionWaiting(false);
         }
 
-        if (status === "CHANNEL_ERROR") {
-          setErrorTest(
-            `There was an error subscribing to channel: ${err?.message}`,
-          );
-        }
-
-        if (status === "TIMED_OUT") {
-          setErrorTest(`"Realtime server did not respond in time."`);
-        }
-
-        if (status === "CLOSED") {
-          setErrorTest(`"Realtime channel was unexpectedly closed."`);
-        }
-
-        setSubscriptionWaiting(false);
         // const presenceTrackStatus = await channel.track(userStatus);
         // console.log(presenceTrackStatus);
       });
@@ -237,10 +217,6 @@ export const SpellyLobbyProvider = ({
       supabase.removeChannel(channel);
     };
   }, []);
-
-  if (!!errorTest) {
-    return <div>{errorTest}</div>;
-  }
 
   return (
     <SpellyLobbyContext.Provider
