@@ -11,7 +11,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,7 +18,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { createLobbyAction, joinLobbyAction } from "@/actions/lobby";
-
+import { displayErrorToast } from "@/utils/client";
 
 export default function StartJoinGameForm() {
   const [startGameState, setStartGameState] = useState<boolean>(false);
@@ -34,10 +33,16 @@ export default function StartJoinGameForm() {
   });
 
   const startGameSubmit = async (values: z.infer<typeof startGameSchema>) => {
-    createLobbyAction(values.lobbyName);
+    const { error, message } = await createLobbyAction(values.lobbyName);
+    if (error) {
+      displayErrorToast(`${message}`);
+    }
   };
   const joinGameSubmit = async (values: z.infer<typeof joinGameSchema>) => {
-    joinLobbyAction(values.lobbyID);
+    const { error, message } = await joinLobbyAction(values.lobbyID);
+    if (error) {
+      displayErrorToast(`${message}`);
+    }
   };
 
   const joinGameFormReturn = useForm<z.infer<typeof joinGameSchema>>({
@@ -52,7 +57,7 @@ export default function StartJoinGameForm() {
     return (
       <Form {...startGameFormReturn}>
         <form
-          className="flex flex-col gap-4"
+          className="flex animate-[fade-slide-in_0.2s] flex-col gap-4"
           onSubmit={startGameFormReturn.handleSubmit(startGameSubmit)}
         >
           <FormField
@@ -88,7 +93,7 @@ export default function StartJoinGameForm() {
     return (
       <Form {...joinGameFormReturn}>
         <form
-          className="flex flex-col gap-4"
+          className="flex animate-[fade-slide-in_0.2s] flex-col gap-4"
           onSubmit={joinGameFormReturn.handleSubmit(joinGameSubmit)}
         >
           <FormField
@@ -122,7 +127,7 @@ export default function StartJoinGameForm() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex animate-[fade-slide-in_0.2s] flex-col gap-4">
       <Button className="text-lg" onClick={() => setStartGameState(true)}>
         Create Lobby
       </Button>
