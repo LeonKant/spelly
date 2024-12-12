@@ -1,13 +1,13 @@
 import {
-  SpellyLobbyRealtimePayloadT,
-  SpellyPrevRoundRealtimePayloadT,
-} from "@/types/realtime";
-import {
   SpellyLobbyPrevRoundT,
   SpellyLobbySnakeToCamelCaseKeys,
   SpellyLobbyT,
   SpellyPrevRoundsSnakeToCamelCaseKeys,
-} from "@/db/schema/spelly";
+} from "@/types/db";
+import {
+  SpellyLobbyRealtimePayloadT,
+  SpellyPrevRoundRealtimePayloadT,
+} from "@/types/realtime";
 
 function snakeToCamelCase<
   RealTimeT extends Record<string, any>,

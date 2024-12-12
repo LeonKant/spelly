@@ -1,19 +1,16 @@
 "use server";
 
-import { and, eq, like, or } from "drizzle-orm";
+import { eq, like, or } from "drizzle-orm";
 import { db } from "..";
 import {
   lobbiesInSpelly,
   lobbyPlayersInSpelly,
   lobbyPrevRoundsInSpelly,
   profilesInSpelly,
-  SpellyLobbyPrevRoundT,
   wordsInSpelly,
 } from "../schema/spelly";
+import { SpellyLobbyPrevRoundT, SpellyLobbyT } from "@/types/db";
 
-export async function getUsers() {
-  return await db.select().from(profilesInSpelly);
-}
 export async function getUserName(userId: string): Promise<string | null> {
   return (
     await db
@@ -55,12 +52,13 @@ export async function getLobbyUsernameAndPoints(lobbyId: string) {
   );
 }
 
-export async function getLobbyInfoFromHostId(userId: string) {
+export async function getLobbyInfoFromHostId(userId: string):Promise<SpellyLobbyT> {
   return (
     await db
       .select()
       .from(lobbiesInSpelly)
       .where(eq(lobbiesInSpelly.hostId, userId))
+      .limit(1)
   )?.[0];
 }
 

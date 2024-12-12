@@ -1,4 +1,4 @@
-import { SpellyLobbyPrevRoundT, SpellyLobbyT } from "@/db/schema/spelly";
+import { SpellyLobbyPrevRoundT, SpellyLobbyT } from "./db";
 
 type BaseSpellyLobbyContextT = {
   userID: string;
