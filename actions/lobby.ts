@@ -20,32 +20,17 @@ import {
   resetLobbyPlayerPoints,
   updateLobbyState,
 } from "@/db/queries/update";
-import { SpellyLobbyInsertT, SpellyLobbyT } from "@/db/schema/spelly";
 import { gameLobbySchema } from "@/lib/form-schemas/GameLobbyScema";
+import { LobbyInfoUpdateT, SpellyLobbyT } from "@/types/db";
+import {
+  ActionResponse,
+  ClientAndLobbyInfoT,
+  ClientInfoT,
+  WithoutErrorParamsT,
+} from "@/types/lobby-actions";
 import { createClient } from "@/utils/supabase/server";
-import { SupabaseClient, User } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-
-type BaseGetClientAndLobbyInfoT = {
-  user?: User;
-  lobbyInfo?: SpellyLobbyT;
-  error: boolean;
-  message?: string;
-  supabase?: SupabaseClient<any, "public", any>;
-};
-
-type GetClientAndLobbyInfoSuccessT = {
-  error: false;
-  user: User;
-  lobbyInfo: SpellyLobbyT;
-  supabase: SupabaseClient<any, "public", any>;
-} & BaseGetClientAndLobbyInfoT;
-
-type GetClientAndLobbyInfoErrorT = {
-  error: true;
-  message: string;
-} & BaseGetClientAndLobbyInfoT;
 
 const initLobbyState: Partial<SpellyLobbyT> = {
   currentLetter: 0,
@@ -56,181 +41,222 @@ const initLobbyState: Partial<SpellyLobbyT> = {
 
 const letters = "abcdefghijklmnopqrstuvwxyz";
 
-async function getClientAndLobbyInfo(): Promise<
-  GetClientAndLobbyInfoSuccessT | GetClientAndLobbyInfoErrorT
-> {
-  const error = true;
-  const message = "Success";
+async function getClientInfo(): Promise<ActionResponse<ClientInfoT>> {
   const supabase = await createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // check if signed in
   if (!!!user?.id) {
-    return { error, message: "User not signed in" };
+    return { error: true, message: "User not signed in." };
   }
+
+  return { error: false, supabase, user };
+}
+
+async function withClientInfo<T extends WithoutErrorParamsT = {}>(
+  callback: (input: ClientInfoT) => Promise<ActionResponse<T>>,
+): Promise<ActionResponse<T>> {
+  const { error, message, supabase, user } = await getClientInfo();
+  if (error) return { error: true, message };
+
+  return callback({ supabase, user });
+}
+
+async function withClientAndLobbyInfo<T extends WithoutErrorParamsT = {}>(
+  callback: (input: ClientAndLobbyInfoT) => Promise<ActionResponse<T>>,
+  options?: { checkIfHost: boolean },
+): Promise<ActionResponse<T>> {
+  const { error: clientError, message, supabase, user } = await getClientInfo();
+  if (clientError) return { error: true, message };
+
   // get lobby info from lobby_players
   const lobbyInfo = await getLobbyInfoFromUserId(user.id);
 
   // user not in game
-  if (!lobbyInfo) return { error, message: "User not in game" };
+  if (!lobbyInfo) return { error: true, message: "User not in game." };
 
-  return { user, lobbyInfo, error: false, message, supabase };
+  // user not host
+  if (options?.checkIfHost && lobbyInfo.hostId !== user.id)
+    return { error: true, message: "User not host." };
+
+  return await callback({ supabase, user, lobbyInfo });
 }
 
 export async function createLobbyAction(lobbyName: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // check if signed in
-  if (!!!user?.id) {
-    throw new Error();
-  }
-
-  await initLobby(lobbyName, user.id);
-  redirect("/lobby");
-}
-
-export async function joinLobbyAction(lobbyID: string) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // check if signed in
-  if (!!!user?.id) {
-    console.log("user not signed in");
-    return;
-  }
-
-  // check if lobby exists
-  const lobby = await getLobbyInfoFromLobbyId(lobbyID);
-  if (!!!lobby) {
-    console.log("lobby not found");
-    return;
-  }
-
-  if (lobby.gameStarted) {
-    console.log("Game already started");
-    return;
-  }
-
-  // insert into lobby_players table
-  await addUserToLobby(lobbyID, user.id);
-
-  // redirect
-  redirect("/lobby");
-}
-
-export async function hostEndGameAction() {
-  const { error, user, lobbyInfo, supabase } = await getClientAndLobbyInfo();
-  if (error) return;
-  // user not host
-  if (lobbyInfo.hostId !== user.id) return;
-
-  await deleteLobby(lobbyInfo.id);
-
-  const channel = supabase.channel(`lobby-${lobbyInfo.id}`);
-
-  channel.send({
-    type: "broadcast",
-    event: "end-game",
-    payload: {},
+  return await withClientInfo(async ({ user }) => {
+    try {
+      await initLobby(lobbyName, user.id);
+    } catch (error) {
+      return {
+        error: true,
+        message: "Error initializing lobby.",
+      };
+    }
+    redirect("/lobby");
   });
-
-  supabase.removeChannel(channel);
 }
 
-export async function hostResetGameAction() {
-  const { error, user, lobbyInfo, supabase } = await getClientAndLobbyInfo();
-  if (error) return;
-  // user not host
-  if (lobbyInfo.hostId !== user.id) return;
+export const joinLobbyAction = async (lobbyID: string) => {
+  return await withClientInfo(async ({ user }): Promise<ActionResponse> => {
+    const lobby = await getLobbyInfoFromLobbyId(lobbyID);
+    if (!!!lobby) {
+      return { error: true, message: "Lobby not found." };
+    }
 
-  await updateLobbyState(lobbyInfo.id, initLobbyState);
-  await resetLobbyPlayerPoints(lobbyInfo.id);
-  await deletePrevRounds(lobbyInfo.id);
+    if (lobby.gameStarted) {
+      return { error: true, message: "Game already started." };
+    }
 
-  const channel = supabase.channel(`lobby-${lobbyInfo.id}`);
+    // insert into lobby_players table
+    try {
+      await addUserToLobby(lobbyID, user.id);
+    } catch (error) {
+      console.log(error);
+      return { error: true, message: "Error adding user into lobby" };
+    }
 
-  channel.send({
-    type: "broadcast",
-    event: "reset-game",
-    payload: {},
+    redirect("/lobby");
   });
+};
 
-  supabase.removeChannel(channel);
-}
+export const hostEndGameAction = async () =>
+  await withClientAndLobbyInfo(
+    async ({ lobbyInfo, supabase }): Promise<ActionResponse> => {
+      try {
+        await deleteLobby(lobbyInfo.id);
+      } catch (error) {
+        return { error: true, message: "Error deleting lobby." };
+      }
 
-export async function leaveGameAction() {
-  const { error, user, lobbyInfo } = await getClientAndLobbyInfo();
-  if (error) return;
+      const channel = supabase.channel(`lobby-${lobbyInfo.id}`);
 
-  await deletePlayerFromLobby(user.id, lobbyInfo.id);
+      channel.send({
+        type: "broadcast",
+        event: "end-game",
+        payload: {},
+      });
 
-  redirect("/");
-}
+      supabase.removeChannel(channel);
 
-export async function startGameAction() {
-  const { error, user, lobbyInfo } = await getClientAndLobbyInfo();
-  if (error) return;
+      return { error: false };
+    },
+    { checkIfHost: true },
+  );
 
-  // user not host
-  if (lobbyInfo.hostId !== user.id) return;
+export const hostResetGameAction = async () => {
+  return await withClientAndLobbyInfo(
+    async ({ lobbyInfo, supabase }): Promise<ActionResponse> => {
+      // TODO: change to db transaction
+      await updateLobbyState(lobbyInfo.id, initLobbyState);
+      await resetLobbyPlayerPoints(lobbyInfo.id);
+      await deletePrevRounds(lobbyInfo.id);
 
-  await updateLobbyState(lobbyInfo.id, { gameStarted: true });
-}
+      const channel = supabase.channel(`lobby-${lobbyInfo.id}`);
 
-export async function playerTurnSubmitAction(
+      channel.send({
+        type: "broadcast",
+        event: "reset-game",
+        payload: {},
+      });
+
+      supabase.removeChannel(channel);
+
+      return { error: false };
+    },
+    { checkIfHost: true },
+  );
+};
+
+export const leaveGameAction = async () => {
+  return await withClientAndLobbyInfo(
+    async ({ user, lobbyInfo }): Promise<ActionResponse> => {
+      if (user.id === lobbyInfo.hostId) {
+        return await hostEndGameAction();
+      } else {
+        try {
+          await deletePlayerFromLobby(user.id, lobbyInfo.id);
+        } catch (error) {
+          return { error: true, message: "Error deleting player from lobby" };
+        }
+      }
+      redirect("/");
+    },
+  );
+};
+
+export const startGameAction = async () => {
+  return await withClientAndLobbyInfo(
+    async ({ lobbyInfo }): Promise<ActionResponse> => {
+      try {
+        await updateLobbyState(lobbyInfo.id, { gameStarted: true });
+      } catch (error) {
+        return { error: true, message: "Error updating lobby state" };
+      }
+      return { error: false };
+    },
+    { checkIfHost: true },
+  );
+};
+
+const updateLobbyStateAction = async (
+  lobbyId: string,
+  lobbyInfo: LobbyInfoUpdateT,
+): Promise<ActionResponse> => {
+  try {
+    await updateLobbyState(lobbyId, lobbyInfo);
+  } catch (error) {
+    return { error: true, message: "Error updating game state" };
+  }
+  return { error: false };
+};
+
+export const playerTurnSubmitAction = async (
   values: z.infer<typeof gameLobbySchema>,
-) {
-  const { error, user, lobbyInfo } = await getClientAndLobbyInfo();
-  if (error) return;
+) => {
+  return await withClientAndLobbyInfo(async ({ lobbyInfo, user }) => {
+    const { gameInput } = values;
+    const {
+      gameState,
+      currentPlayer,
+      lobbyPlayerIds,
+      currentLetter,
+      id: lobbyId,
+    } = lobbyInfo;
 
-  const { gameInput } = values;
-  const {
-    gameState,
-    currentPlayer,
-    lobbyPlayerIds,
-    currentLetter,
-    id: lobbyId,
-  } = lobbyInfo;
+    const newWord = `${gameState}${gameInput}`;
+    const wordExists = await checkWord(newWord);
 
-  const newWord = `${gameState}${gameInput}`;
-  const wordExists = await checkWord(newWord);
+    if (wordExists) {
+      // assign state to be new word, change player
+      return await updateLobbyStateAction(lobbyInfo.id, {
+        gameState: newWord,
+        currentPlayer: (currentPlayer + 1) % lobbyPlayerIds.length,
+      });
+    }
+    // if word doesn't exist, increase current letter
+    const nextLetter = currentLetter + 1;
 
-  if (wordExists) {
-    // assign state to be new word, change player
+    // if letter is 'z', game over
+    if (nextLetter >= 26) {
+      return await updateLobbyStateAction(lobbyInfo.id, {
+        gameOver: true,
+      });
+    }
+
+    // TODO: change to db transaction
+    // if word doesn't exist, increase current letter, change player, increase of player points,
+    // add to prev rounds
     await updateLobbyState(lobbyInfo.id, {
-      gameState: newWord,
+      gameState: letters[nextLetter],
+      currentLetter: nextLetter,
       currentPlayer: (currentPlayer + 1) % lobbyPlayerIds.length,
     });
-    return;
-  }
-  // if word doesn't exist, increase current letter
-  const nextLetter = currentLetter + 1;
 
-  // if letter is 'z', game over
-  if (nextLetter >= 26) {
-    await updateLobbyState(lobbyInfo.id, {
-      gameOver: true,
-    });
-    return;
-  }
+    await incrementPlayerPoints(user.id, lobbyInfo.id);
+    await addToPrevRounds(user.id, { gameState: newWord, lobbyId });
 
-  // if word doesn't exist, increase current letter, change player, increase of player points,
-  // add to prev rounds
-  await updateLobbyState(lobbyInfo.id, {
-    gameState: letters[nextLetter],
-    currentLetter: nextLetter,
-    currentPlayer: (currentPlayer + 1) % lobbyPlayerIds.length,
+    return { error: false };
   });
-
-  await incrementPlayerPoints(user.id, lobbyInfo.id);
-  await addToPrevRounds(user.id, { gameState: newWord, lobbyId });
-}
+};
