@@ -45,6 +45,9 @@ export const lobbiesInSpelly = spelly.table(
     gameOver: boolean("game_over").default(false).notNull(),
     name: text().default("lobby").notNull(),
     lobbyPlayerIds: uuid("lobby_player_ids").array().default([""]).notNull(),
+    lastActivity: timestamp("last_activity", { mode: "string" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
   },
   (table) => [
     foreignKey({

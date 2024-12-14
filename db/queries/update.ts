@@ -11,7 +11,7 @@ export async function updateLobbyState(
 ) {
   await db
     .update(lobbiesInSpelly)
-    .set({ ...lobbyInfo })
+    .set({ ...lobbyInfo, lastActivity: sql`CURRENT_TIMESTAMP` })
     .where(eq(lobbiesInSpelly.id, lobbyId));
 }
 
@@ -35,5 +35,5 @@ export async function resetLobbyPlayerPoints(lobbyId: string) {
     .set({
       points: 0,
     })
-    .where(and(eq(lobbyPlayersInSpelly.lobbyId, lobbyId)));
+    .where(eq(lobbyPlayersInSpelly.lobbyId, lobbyId));
 }
