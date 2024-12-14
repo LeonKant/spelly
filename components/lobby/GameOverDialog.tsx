@@ -2,7 +2,6 @@
 
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -34,9 +33,9 @@ export function GameOverDialog() {
       const winners: string[] = [];
 
       const maxPoints: number = Math.max(
-        ...Object.entries(lobbyPlayers)
-          .map(([_, player]) => player.points)
-          .filter((p) => p !== undefined),
+        ...Object.entries(lobbyPlayers).map(
+          ([_, player]) => player?.points ?? 0,
+        ),
       );
       Object.entries(lobbyPlayers).map(([id, player]) => {
         if (player.points === maxPoints) {
