@@ -17,13 +17,14 @@ import {
   SidebarMenuItem,
 } from "../ui/sidebar";
 import { useToast } from "@/hooks/use-toast";
+import { CLIENT } from "@/config/var.config";
 
 export default function LobbySidebarHeader() {
   const {
     lobbyState: { name: lobbyName, id: lobbyId },
   } = useSpellyLobby();
 
-  const joinLink: string = `https://example.com/join/${lobbyId}`;
+  const joinLink: string = `${CLIENT.projectURL}/lobby/join/${lobbyId}`;
   const { toast } = useToast();
 
   const handleIdClick = () => {
