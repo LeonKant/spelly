@@ -113,7 +113,6 @@ export const joinLobbyAction = async (lobbyID: string) => {
     try {
       await addUserToLobby(lobbyID, user.id);
     } catch (error) {
-      console.log(error);
       return { error: true, message: "Error adding user into lobby" };
     }
 
@@ -121,8 +120,8 @@ export const joinLobbyAction = async (lobbyID: string) => {
   });
 };
 
-export const hostEndGameAction = async () =>
-  await withClientAndLobbyInfo(
+export const hostEndGameAction = async () => {
+  return await withClientAndLobbyInfo(
     async ({ lobbyInfo, supabase }): Promise<ActionResponse> => {
       try {
         await deleteLobby(lobbyInfo.id);
@@ -144,6 +143,7 @@ export const hostEndGameAction = async () =>
     },
     { checkIfHost: true },
   );
+};
 
 export const hostResetGameAction = async () => {
   return await withClientAndLobbyInfo(
@@ -178,6 +178,7 @@ export const leaveGameAction = async () => {
         try {
           await deletePlayerFromLobby(user.id, lobbyInfo.id);
         } catch (error) {
+          console.error(error);
           return { error: true, message: "Error deleting player from lobby" };
         }
       }
@@ -225,6 +226,10 @@ export const playerTurnSubmitAction = async (
       id: lobbyId,
     } = lobbyInfo;
 
+    if (user.id !== lobbyPlayerIds[currentPlayer]){
+      return {error: true, message: "Not your turn"}
+    }
+
     const newWord = `${gameState}${gameInput}`;
     const wordExists = await checkWord(newWord);
 
@@ -248,14 +253,17 @@ export const playerTurnSubmitAction = async (
     // TODO: change to db transaction
     // if word doesn't exist, increase current letter, change player, increase of player points,
     // add to prev rounds
-    await updateLobbyState(lobbyInfo.id, {
+    await updateLobbyStateAction(lobbyInfo.id, {
       gameState: letters[nextLetter],
       currentLetter: nextLetter,
       currentPlayer: (currentPlayer + 1) % lobbyPlayerIds.length,
     });
 
-    await incrementPlayerPoints(user.id, lobbyInfo.id);
-    await addToPrevRounds(user.id, { gameState: newWord, lobbyId });
+    await incrementPlayerPoints(lobbyPlayerIds[currentPlayer], lobbyInfo.id);
+    await addToPrevRounds(lobbyPlayerIds[currentPlayer], {
+      gameState: newWord,
+      lobbyId,
+    });
 
     return { error: false };
   });
