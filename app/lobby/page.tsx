@@ -6,7 +6,7 @@ import {
 } from "@/db/queries/select";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import Lobby from "../../components/lobby/Lobby";
+import Lobby from "@/components/lobby/Lobby";
 import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby-context.type";
 import { LobbySidebar } from "@/components/lobby/LobbySidebar";
 import DefaultWrapper from "@/components/DefaultWrapper";

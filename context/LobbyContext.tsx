@@ -93,15 +93,7 @@ export const SpellyLobbyProvider = ({
   ) => {
     const { points, user_id } = payload.new;
 
-    if (points < 0) {
-      console.log("User points not found");
-      return;
-    }
-
-    if (!!!user_id) {
-      console.log("User id not found");
-      return;
-    }
+    if (points < 0 || !!!user_id) return;
 
     setLobbyPlayers((prev) => {
       const newPlayers = { ...prev };
@@ -209,7 +201,7 @@ export const SpellyLobbyProvider = ({
         if (status === "SUBSCRIBED") {
           setSubscriptionWaiting(false);
         }
-
+        await channel.track(userStatus);
         // const presenceTrackStatus = await channel.track(userStatus);
         // console.log(presenceTrackStatus);
       });

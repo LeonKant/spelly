@@ -8,21 +8,17 @@ import signUpSchema from "@/lib/form-schemas/SignUpSchema";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
-  const password = formData.get("password")?.toString();
-  const username = formData.get("username")?.toString();
+  const username = formData.get("username")?.toString().trim();
 
   const supabase = await createClient();
-  const origin = (await headers()).get("origin");
 
-  if (!email || !password || !username) {
-    return { error: "Email, username, and password are required" };
+  if (!email || !username || username.length === 0) {
+    return { error: "Email and username are required" };
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signInWithOtp({
     email,
-    password,
     options: {
-      emailRedirectTo: `${origin}/auth/callback`,
       data: {
         username,
       },
@@ -79,19 +75,25 @@ export const signUpActionTest = async (
 
 export const signInAction = async (formData: FormData) => {
   const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  // const password = formData.get("password") as string;
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabase.auth.signInWithOtp({
     email,
-    password,
+    options: {
+      shouldCreateUser: false,
+    },
   });
 
   if (error) {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  return redirect("/");
+  return encodedRedirect(
+    "success",
+    "/sign-up",
+    "Please check your email for a verification link.",
+  );
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
