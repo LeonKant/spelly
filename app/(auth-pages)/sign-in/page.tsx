@@ -1,6 +1,6 @@
-import { signInAction } from "@/actions/form";
+import { signInAction, signUpAction } from "@/actions/form";
 import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
+import CaptchaSubmit from "@/components/forms/CaptchaSubmit";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
@@ -19,9 +19,11 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
       <div className="mt-8 flex flex-col gap-2 [&>input]:mb-3">
         <Label htmlFor="email">Email</Label>
         <Input name="email" placeholder="you@example.com" required />
-        <SubmitButton pendingText="Signing In..." formAction={signInAction}>
-          Sign in
-        </SubmitButton>
+        <CaptchaSubmit
+          pendingText="Signing In..."
+          buttonText="Sign in"
+          formAction={signInAction}
+        />
         <FormMessage message={searchParams} />
       </div>
     </form>

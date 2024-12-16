@@ -1,6 +1,6 @@
 import { signUpAction } from "@/actions/form";
 import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
+import CaptchaSubmit from "@/components/forms/CaptchaSubmit";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
@@ -32,9 +32,11 @@ export default async function Signup(props: {
           <Input name="email" placeholder="you@example.com" required />
           <Label htmlFor="username">Username*</Label>
           <Input name="username" placeholder="Your username" required />
-          <SubmitButton formAction={signUpAction} pendingText="Signing up...">
-            Sign up
-          </SubmitButton>
+          <CaptchaSubmit
+            pendingText="Signing up..."
+            buttonText="Sign up"
+            formAction={signUpAction}
+          />
           <FormMessage message={searchParams} />
         </div>
       </form>
