@@ -9,12 +9,17 @@ import signUpSchema from "@/lib/form-schemas/SignUpSchema";
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const username = formData.get("username")?.toString().trim();
+  const captchaToken = formData.get("captchaToken")?.toString();
 
-  const supabase = await createClient();
+  if (!captchaToken) {
+    return { error: "Captcha token required" };
+  }
 
   if (!email || !username || username.length === 0) {
     return { error: "Email and username are required" };
   }
+
+  const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
@@ -22,6 +27,7 @@ export const signUpAction = async (formData: FormData) => {
       data: {
         username,
       },
+      captchaToken,
     },
   });
 
@@ -75,13 +81,18 @@ export const signUpActionTest = async (
 
 export const signInAction = async (formData: FormData) => {
   const email = formData.get("email") as string;
-  // const password = formData.get("password") as string;
+  const captchaToken = formData.get("captchaToken")?.toString();
+
+  if (!captchaToken) {
+    return { error: "Captcha token required" };
+  }
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
       shouldCreateUser: false,
+      captchaToken,
     },
   });
 
@@ -91,7 +102,7 @@ export const signInAction = async (formData: FormData) => {
 
   return encodedRedirect(
     "success",
-    "/sign-up",
+    "/sign-in",
     "Please check your email for a verification link.",
   );
 };
