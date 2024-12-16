@@ -226,8 +226,8 @@ export const playerTurnSubmitAction = async (
       id: lobbyId,
     } = lobbyInfo;
 
-    if (user.id !== lobbyPlayerIds[currentPlayer]){
-      return {error: true, message: "Not your turn"}
+    if (user.id !== lobbyPlayerIds[currentPlayer]) {
+      return { error: true, message: "Not your turn" };
     }
 
     const newWord = `${gameState}${gameInput}`;
