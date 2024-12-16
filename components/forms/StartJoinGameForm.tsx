@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useForm } from "react-hook-form";
 import {
@@ -23,6 +23,8 @@ import { displayErrorToast } from "@/utils/client";
 export default function StartJoinGameForm() {
   const [startGameState, setStartGameState] = useState<boolean>(false);
   const [joinGameState, setJoinGameState] = useState<boolean>(false);
+  const [startGameError, setStartGameError] = useState<boolean>(false);
+  const [joinGameError, setJoinGameError] = useState<boolean>(false);
 
   const startGameFormReturn = useForm<z.infer<typeof startGameSchema>>({
     resolver: zodResolver(startGameSchema),
@@ -32,10 +34,19 @@ export default function StartJoinGameForm() {
     },
   });
 
+  const joinGameFormReturn = useForm<z.infer<typeof joinGameSchema>>({
+    resolver: zodResolver(joinGameSchema),
+    defaultValues: {
+      lobbyID: "",
+    },
+    mode: "onSubmit",
+  });
+
   const startGameSubmit = async (values: z.infer<typeof startGameSchema>) => {
     const { error, message } = await createLobbyAction(values.lobbyName);
     if (error) {
       displayErrorToast(`${message}`);
+      setStartGameError(true);
     }
   };
   const joinGameSubmit = async (values: z.infer<typeof joinGameSchema>) => {
@@ -45,24 +56,35 @@ export default function StartJoinGameForm() {
     }
   };
 
-  const joinGameFormReturn = useForm<z.infer<typeof joinGameSchema>>({
-    resolver: zodResolver(joinGameSchema),
-    defaultValues: {
-      lobbyID: "",
-    },
-    mode: "onSubmit",
-  });
+  useEffect(() => {
+    if (startGameState && startGameError) {
+      startGameFormReturn.reset();
+      setStartGameError(false);
+    }
+  }, [startGameState, startGameError]);
+
+  useEffect(() => {
+    if (joinGameState && joinGameError) {
+      joinGameFormReturn.reset();
+      setJoinGameError(false);
+    }
+  }, [joinGameState, joinGameError]);
 
   if (startGameState) {
+    const {
+      handleSubmit,
+      control,
+      formState: { isSubmitting, isSubmitted },
+    } = startGameFormReturn;
     return (
       <Form {...startGameFormReturn}>
         <form
           className="flex animate-[fade-slide-in_0.2s] flex-col gap-4"
-          onSubmit={startGameFormReturn.handleSubmit(startGameSubmit)}
+          onSubmit={handleSubmit(startGameSubmit)}
         >
           <FormField
             name="lobbyName"
-            control={startGameFormReturn.control}
+            control={control}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Enter lobby name:</FormLabel>
@@ -73,13 +95,18 @@ export default function StartJoinGameForm() {
             )}
           />
           <div className="flex gap-4">
-            <Button className="flex-1" type="submit">
-              Start
+            <Button
+              className="flex-1"
+              type="submit"
+              disabled={isSubmitting || isSubmitted}
+            >
+              {isSubmitting || isSubmitted ? "Creating lobby..." : "Start"}
             </Button>
             <Button
               className="flex-1"
               variant={"destructive"}
               onClick={() => setStartGameState(false)}
+              disabled={isSubmitting || isSubmitted}
             >
               Cancel
             </Button>
@@ -90,14 +117,19 @@ export default function StartJoinGameForm() {
   }
 
   if (joinGameState) {
+    const {
+      handleSubmit,
+      control,
+      formState: { isSubmitting, isSubmitted },
+    } = joinGameFormReturn;
     return (
       <Form {...joinGameFormReturn}>
         <form
           className="flex animate-[fade-slide-in_0.2s] flex-col gap-4"
-          onSubmit={joinGameFormReturn.handleSubmit(joinGameSubmit)}
+          onSubmit={handleSubmit(joinGameSubmit)}
         >
           <FormField
-            control={joinGameFormReturn.control}
+            control={control}
             name="lobbyID"
             render={({ field }) => (
               <FormItem>
@@ -110,13 +142,18 @@ export default function StartJoinGameForm() {
             )}
           />
           <div className="flex gap-4">
-            <Button className="flex-1" type="submit">
-              Join
+            <Button
+              className="flex-1"
+              type="submit"
+              disabled={isSubmitting || isSubmitted}
+            >
+              {isSubmitting || isSubmitted ? "Joining game..." : "Join"}
             </Button>
             <Button
               className="flex-1"
               variant={"destructive"}
               onClick={() => setJoinGameState(false)}
+              disabled={isSubmitting || isSubmitted}
             >
               Cancel
             </Button>
