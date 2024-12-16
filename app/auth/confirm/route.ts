@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -7,24 +8,18 @@ export async function GET(request: Request) {
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   const requestUrl = new URL(request.url);
   const token_hash = requestUrl.searchParams.get("token_hash");
+  const type = requestUrl.searchParams.get("type") as EmailOtpType;
   const origin = requestUrl.origin;
-  const redirectTo = requestUrl.searchParams.get("redirect_to")?.toString();
 
-  if (!token_hash) {
+  if (!token_hash || !type) {
     return NextResponse.redirect(`${origin}`);
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.verifyOtp({
     token_hash,
-    type: "magiclink",
+    type,
   });
-
-  
-
-  // if (redirectTo) {
-  //   return NextResponse.redirect(`${origin}${redirectTo}`);
-  // }
 
   // URL to redirect to after sign up process completes
   return NextResponse.redirect(`${origin}`);
