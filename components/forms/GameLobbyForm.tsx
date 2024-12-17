@@ -12,7 +12,7 @@ import {
 import { useSpellyLobby } from "@/context/LobbyContext";
 import { gameLobbySchema } from "@/lib/form-schemas/GameLobbyScema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -28,6 +28,7 @@ export default function GameLobbyForm() {
       gameOver,
     },
   } = useSpellyLobby();
+  const [gameSubmitError, setGameSubmitError] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -47,12 +48,27 @@ export default function GameLobbyForm() {
     gameLobbyFormReturn.reset();
   }, [gameState]);
 
+  useEffect(() => {
+    if (gameSubmitError) {
+      gameLobbyFormReturn.reset();
+      setGameSubmitError(false);
+    }
+  }, [gameSubmitError]);
+
+  const handleTurnSubmit = async (values: z.infer<typeof gameLobbySchema>) => {
+    const { error } = await playerTurnSubmitAction(values);
+
+    if (error) {
+      setGameSubmitError(true);
+    }
+  };
+
   return (
     <Form {...gameLobbyFormReturn}>
       <form
-        className="flex w-full md:max-w-screen-md max-w-screen-sm flex-col items-center gap-4"
+        className="flex w-full max-w-screen-sm flex-col items-center gap-4 md:max-w-screen-md"
         autoComplete="off"
-        onSubmit={gameLobbyFormReturn.handleSubmit(playerTurnSubmitAction)}
+        onSubmit={gameLobbyFormReturn.handleSubmit(handleTurnSubmit)}
       >
         <FormField
           name="gameInput"
@@ -93,7 +109,10 @@ export default function GameLobbyForm() {
               !gameLobbyFormReturn.formState.isValid
             }
           >
-            Submit
+            {gameLobbyFormReturn.formState.isSubmitted ||
+            gameLobbyFormReturn.formState.isSubmitting
+              ? "Submitting..."
+              : "Submit"}
           </Button>
         )}
       </form>
