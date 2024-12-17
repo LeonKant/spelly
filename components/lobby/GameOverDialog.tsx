@@ -32,13 +32,13 @@ export function GameOverDialog() {
     if (gameOver) {
       const winners: string[] = [];
 
-      const maxPoints: number = Math.max(
+      const minPoints: number = Math.min(
         ...Object.entries(lobbyPlayers).map(
           ([_, player]) => player?.points ?? 0,
         ),
       );
       Object.entries(lobbyPlayers).map(([id, player]) => {
-        if (player.points === maxPoints) {
+        if (player.points === minPoints) {
           winners.push(id);
         }
       });
