@@ -216,55 +216,57 @@ const updateLobbyStateAction = async (
 export const playerTurnSubmitAction = async (
   values: z.infer<typeof gameLobbySchema>,
 ) => {
-  return await withClientAndLobbyInfo(async ({ lobbyInfo, user }) => {
-    const { gameInput } = values;
-    const {
-      gameState,
-      currentPlayer,
-      lobbyPlayerIds,
-      currentLetter,
-      id: lobbyId,
-    } = lobbyInfo;
+  return await withClientAndLobbyInfo(
+    async ({ lobbyInfo, user }): Promise<ActionResponse> => {
+      const { gameInput } = values;
+      const {
+        gameState,
+        currentPlayer,
+        lobbyPlayerIds,
+        currentLetter,
+        id: lobbyId,
+      } = lobbyInfo;
 
-    if (user.id !== lobbyPlayerIds[currentPlayer]) {
-      return { error: true, message: "Not your turn" };
-    }
+      if (user.id !== lobbyPlayerIds[currentPlayer]) {
+        return { error: true, message: "Not your turn" };
+      }
 
-    const newWord = `${gameState}${gameInput}`;
-    const wordExists = await checkWord(newWord);
+      const newWord = `${gameState}${gameInput.toLowerCase()}`;
+      const wordExists = await checkWord(newWord);
 
-    if (wordExists) {
-      // assign state to be new word, change player
-      return await updateLobbyStateAction(lobbyInfo.id, {
-        gameState: newWord,
+      if (wordExists) {
+        // assign state to be new word, change player
+        return await updateLobbyStateAction(lobbyInfo.id, {
+          gameState: newWord,
+          currentPlayer: (currentPlayer + 1) % lobbyPlayerIds.length,
+        });
+      }
+      // if word doesn't exist, increase current letter
+      const nextLetter = currentLetter + 1;
+
+      // if letter is 'z', game over
+      if (nextLetter >= 26) {
+        return await updateLobbyStateAction(lobbyInfo.id, {
+          gameOver: true,
+        });
+      }
+
+      // TODO: change to db transaction
+      // if word doesn't exist, increase current letter, change player, increase of player points,
+      // add to prev rounds
+      await updateLobbyStateAction(lobbyInfo.id, {
+        gameState: letters[nextLetter],
+        currentLetter: nextLetter,
         currentPlayer: (currentPlayer + 1) % lobbyPlayerIds.length,
       });
-    }
-    // if word doesn't exist, increase current letter
-    const nextLetter = currentLetter + 1;
 
-    // if letter is 'z', game over
-    if (nextLetter >= 26) {
-      return await updateLobbyStateAction(lobbyInfo.id, {
-        gameOver: true,
+      await incrementPlayerPoints(lobbyPlayerIds[currentPlayer], lobbyInfo.id);
+      await addToPrevRounds(lobbyPlayerIds[currentPlayer], {
+        gameState: newWord,
+        lobbyId,
       });
-    }
 
-    // TODO: change to db transaction
-    // if word doesn't exist, increase current letter, change player, increase of player points,
-    // add to prev rounds
-    await updateLobbyStateAction(lobbyInfo.id, {
-      gameState: letters[nextLetter],
-      currentLetter: nextLetter,
-      currentPlayer: (currentPlayer + 1) % lobbyPlayerIds.length,
-    });
-
-    await incrementPlayerPoints(lobbyPlayerIds[currentPlayer], lobbyInfo.id);
-    await addToPrevRounds(lobbyPlayerIds[currentPlayer], {
-      gameState: newWord,
-      lobbyId,
-    });
-
-    return { error: false };
-  });
+      return { error: false };
+    },
+  );
 };
