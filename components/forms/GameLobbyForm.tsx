@@ -73,6 +73,7 @@ export default function GameLobbyForm() {
                   <input
                     inputMode="text"
                     disabled={!currentUserTurn || !gameStarted || gameOver}
+                    autoCapitalize="off"
                     ref={(e) => {
                       ref(e);
                       inputRef.current = e;
