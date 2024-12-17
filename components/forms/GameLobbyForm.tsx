@@ -12,7 +12,7 @@ import {
 import { useSpellyLobby } from "@/context/LobbyContext";
 import { gameLobbySchema } from "@/lib/form-schemas/GameLobbyScema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -30,6 +30,7 @@ export default function GameLobbyForm() {
   } = useSpellyLobby();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [startingGame, setStartingGame] = useState<boolean>(false);
 
   if (lobbyPlayerIds[currentPlayer] === userID) {
     inputRef.current?.focus();
@@ -43,6 +44,13 @@ export default function GameLobbyForm() {
 
   const currentUserTurn = userID === lobbyPlayerIds[currentPlayer];
 
+  const handlePlayerTurnSubmit = async (
+    values: z.infer<typeof gameLobbySchema>,
+  ) => {
+    const { error } = await playerTurnSubmitAction(values);
+    gameLobbyFormReturn.resetField("gameInput");
+  };
+
   useEffect(() => {
     gameLobbyFormReturn.reset();
   }, [gameState]);
@@ -50,9 +58,9 @@ export default function GameLobbyForm() {
   return (
     <Form {...gameLobbyFormReturn}>
       <form
-        className="flex w-full md:max-w-screen-md max-w-screen-sm flex-col items-center gap-4"
+        className="flex w-full max-w-screen-sm flex-col items-center gap-4 md:max-w-screen-md"
         autoComplete="off"
-        onSubmit={gameLobbyFormReturn.handleSubmit(playerTurnSubmitAction)}
+        onSubmit={gameLobbyFormReturn.handleSubmit(handlePlayerTurnSubmit)}
       >
         <FormField
           name="gameInput"
@@ -80,8 +88,16 @@ export default function GameLobbyForm() {
           )}
         />
         {!gameStarted && userID === hostId ? (
-          <Button className="w-fit text-lg" onClick={() => startGameAction()}>
-            Start Game
+          <Button
+            className="w-fit text-lg"
+            disabled={startingGame}
+            onClick={async () => {
+              setStartingGame(true);
+              await startGameAction();
+              setStartingGame(false);
+            }}
+          >
+            {startingGame ? "Starting Game..." : "Start Game"}
           </Button>
         ) : (
           <Button
@@ -90,10 +106,13 @@ export default function GameLobbyForm() {
             disabled={
               !gameStarted ||
               !currentUserTurn ||
-              !gameLobbyFormReturn.formState.isValid
+              !gameLobbyFormReturn.formState.isValid ||
+              gameLobbyFormReturn.formState.isSubmitting
             }
           >
-            Submit
+            {gameLobbyFormReturn.formState.isSubmitting
+              ? "Submitting..."
+              : "Submit"}
           </Button>
         )}
       </form>
