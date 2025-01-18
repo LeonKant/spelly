@@ -34,7 +34,7 @@ export function GameOverDialog() {
 
       const minPoints: number = Math.min(
         ...Object.entries(lobbyPlayers).map(
-          ([_, player]) => player?.points ?? 0,
+          ([_, player]) => player?.points ?? 27,
         ),
       );
       Object.entries(lobbyPlayers).map(([id, player]) => {
