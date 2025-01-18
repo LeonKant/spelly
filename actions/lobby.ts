@@ -257,7 +257,7 @@ export const playerTurnSubmitAction = async (
       await updateLobbyStateAction(lobbyInfo.id, {
         gameState: letters[nextLetter],
         currentLetter: nextLetter,
-        currentPlayer: (currentPlayer + 1) % lobbyPlayerIds.length,
+        currentPlayer: nextLetter % lobbyPlayerIds.length,
       });
 
       await incrementPlayerPoints(lobbyPlayerIds[currentPlayer], lobbyInfo.id);
