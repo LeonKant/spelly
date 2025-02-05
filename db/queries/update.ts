@@ -2,7 +2,11 @@
 
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "../../config/db.config";
-import { lobbiesInSpelly, lobbyPlayersInSpelly } from "../schema/spelly";
+import {
+  lobbiesInSpelly,
+  lobbyPlayersInSpelly,
+  profilesInSpelly,
+} from "../schema/spelly";
 import { LobbyInfoUpdateT } from "@/types/db.type";
 
 export async function updateLobbyState(
@@ -36,4 +40,11 @@ export async function resetLobbyPlayerPoints(lobbyId: string) {
       points: 0,
     })
     .where(eq(lobbyPlayersInSpelly.lobbyId, lobbyId));
+}
+
+export async function modifyUserName(userId: string, newUsername: string) {
+  await db
+    .update(profilesInSpelly)
+    .set({ username: newUsername })
+    .where(eq(profilesInSpelly.id, userId));
 }

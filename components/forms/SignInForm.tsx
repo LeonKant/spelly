@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -14,34 +13,33 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { signUpAction } from "@/actions/form";
-import { signUpSchema, SignUpSchemaT } from "@/lib/form-schemas/SignUpSchema";
 import { CLIENT } from "@/config/var.config";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { displayErrorToast } from "@/utils/client";
 import { useState } from "react";
 import { InputOTPForm } from "./OTPForm";
+import { signInSchema, SignInSchemaT } from "@/lib/form-schemas/SignInSchema";
+import { signInAction } from "@/actions/form";
 
-const SignUpForm = () => {
+const SignInForm = () => {
   const [openOTP, setOpenOTP] = useState<boolean>(false);
 
-  const form = useForm<SignUpSchemaT>({
-    resolver: zodResolver(signUpSchema.required()),
+  const form = useForm<SignInSchemaT>({
+    resolver: zodResolver(signInSchema.required()),
     mode: "onChange",
     defaultValues: {
-      username: "",
       email: "",
       captchaToken: "",
     },
   });
 
-  const onSubmit = async (values: SignUpSchemaT) => {
-    const { success, error: parseError } = signUpSchema.safeParse(values);
+  const onSubmit = async (values: SignInSchemaT) => {
+    const { success, error: parseError } = signInSchema.safeParse(values);
     if (!success) {
       displayErrorToast(parseError.message);
       return;
     }
-    const { error } = await signUpAction(values);
+    const { error } = await signInAction(values);
     if (error) {
       displayErrorToast(error.message);
       return;
@@ -55,14 +53,14 @@ const SignUpForm = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <h1 className="text-2xl font-medium">Sign up</h1>
+            <h1 className="text-2xl font-medium">Sign in</h1>
             <p className="text text-sm text-foreground">
-              Already have an account?{" "}
+              Don't have an account?{" "}
               <Link
                 className="font-medium text-primary underline"
-                href="/sign-in"
+                href="/sign-up"
               >
-                Sign in
+                Sign up
               </Link>
             </p>
           </div>
@@ -75,26 +73,6 @@ const SignUpForm = () => {
                 <FormControl>
                   <Input placeholder="you@example.com" {...field} />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username*</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Your username"
-                    {...field}
-                    maxLength={15}
-                  />
-                </FormControl>
-                <FormDescription>
-                  This is the name displayed during games.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -129,4 +107,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default SignInForm;
