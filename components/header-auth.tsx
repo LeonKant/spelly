@@ -5,6 +5,7 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { getUserName } from "@/db/queries/select";
+import { SettingsDialog } from "./settings/SettingsDialog";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -73,6 +74,7 @@ export default async function AuthButton() {
           Sign out
         </Button>
       </form>
+      <SettingsDialog />
     </div>
   );
 }
