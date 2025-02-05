@@ -3,13 +3,10 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { SidebarProvider } from "@/components/ui/sidebar";
-
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+import { CLIENT } from "@/config/var.config";
 
 export const metadata = {
-  metadataBase: new URL(defaultUrl),
+  metadataBase: new URL(CLIENT.projectURL),
   title: "Spelly",
   description: "The best word game to ever be invented",
 };
