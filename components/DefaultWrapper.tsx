@@ -28,12 +28,15 @@ export default function DefaultWrapper({
           </div>
         </nav>
         <div
-          className={`flex ${centerChildren ? "max-w-5xl flex-col gap-20 p-5" : "flex-1"}`}
+          className={`flex ${centerChildren ? "max-w-5xl flex-col p-5" : "flex-1"}`}
         >
           {children}
         </div>
         {/* <div className="flex-1">{children}</div> */}
-        <footer className="mx-auto flex w-full items-center justify-center gap-8 border-t py-16 text-center text-xs"></footer>
+        <footer className="mx-auto flex w-full items-center justify-center gap-2 border-t py-16 text-center text-xs">
+          <Link href={'/privacy'} className="underline">Privacy Policy</Link> &middot;
+          <Link href={'/terms'} className="underline">Terms of Service</Link>
+        </footer>
       </div>
     </main>
   );
