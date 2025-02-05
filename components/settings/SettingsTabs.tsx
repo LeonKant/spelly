@@ -10,12 +10,19 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AccountSettingsForm } from "../forms/AccountSettingsForm";
 import { deleteAccountAction } from "@/actions/form";
+import { displayErrorToast } from "@/utils/client";
 
 interface Props {
   username: string;
 }
 
 export function SettingsTabs({ username }: Props) {
+  const deleteAccount = async () => {
+    const { error, message } = await deleteAccountAction();
+    if (error) {
+      displayErrorToast(message);
+    }
+  };
   return (
     <Tabs defaultValue="account">
       <TabsList className="grid w-full grid-cols-1">
@@ -32,7 +39,7 @@ export function SettingsTabs({ username }: Props) {
             </CardDescription>
           </CardHeader>
           <CardFooter>
-            <Button variant={"destructive"} onClick={deleteAccountAction}>
+            <Button variant={"destructive"} onClick={deleteAccount}>
               Delete your account
             </Button>
           </CardFooter>
