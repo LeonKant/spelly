@@ -23,8 +23,7 @@ import { useState } from "react";
 import { InputOTPForm } from "./OTPForm";
 
 const SignUpForm = () => {
-  const [openOTP, setOpenOTP] = useState<boolean>(false);
-
+  const [emailState, setEmailState] = useState<null | string>(null);
   const form = useForm<SignUpSchemaT>({
     resolver: zodResolver(signUpSchema.required()),
     mode: "onChange",
@@ -46,12 +45,12 @@ const SignUpForm = () => {
       displayErrorToast(error.message);
       return;
     }
-    setOpenOTP(true);
+    setEmailState(values.email);
   };
 
   return (
     <>
-      <InputOTPForm open={openOTP} email={form.getValues("email")} />
+      <InputOTPForm email={emailState} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div>
