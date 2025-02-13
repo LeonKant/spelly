@@ -22,7 +22,7 @@ import { signInSchema, SignInSchemaT } from "@/lib/form-schemas/SignInSchema";
 import { signInAction } from "@/actions/form";
 
 const SignInForm = () => {
-  const [openOTP, setOpenOTP] = useState<boolean>(false);
+  const [emailState, setEmailState] = useState<null | string>(null);
 
   const form = useForm<SignInSchemaT>({
     resolver: zodResolver(signInSchema.required()),
@@ -44,12 +44,12 @@ const SignInForm = () => {
       displayErrorToast(error.message);
       return;
     }
-    setOpenOTP(true);
+    setEmailState(values.email);
   };
 
   return (
     <>
-      <InputOTPForm open={openOTP} email={form.getValues("email")} />
+      <InputOTPForm email={emailState} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div>

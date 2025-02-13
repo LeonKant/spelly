@@ -25,26 +25,22 @@ import { redirect } from "next/navigation";
 import { useEffect } from "react";
 
 interface Props {
-  open: boolean;
-  email: string;
+  email: string | null;
 }
 
-export function InputOTPForm({ open, email }: Props) {
+export function InputOTPForm({ email }: Props) {
   const form = useForm<OTPSchemaT>({
     resolver: zodResolver(OTPSchema),
     defaultValues: {
-      email: "",
-      pin: "",
+      email: email || "",
+      token: "",
     },
   });
 
   const onSubmit = async (data: OTPSchemaT) => {
-    console.log("submit called");
     const supabase = createClient();
-    const { email, pin } = data;
     const { error } = await supabase.auth.verifyOtp({
-      email,
-      token: pin,
+      ...data,
       type: "email",
     });
     if (error) {
@@ -55,23 +51,24 @@ export function InputOTPForm({ open, email }: Props) {
   };
 
   useEffect(() => {
-    form.setValue("email", email);
+    form.setValue("email", email || "");
   }, [email]);
 
+
+  const { isSubmitting, isValid } = form.formState;
+
   return (
-    <Dialog open={open}>
+    <Dialog open={!!email}>
       <DialogTitle className="hidden">Login OTP</DialogTitle>
       <DialogContent>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit, (errors) => {
-              console.error("Form validation errors:", errors);
-            })}
+            onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col items-center space-y-6"
           >
             <FormField
               control={form.control}
-              name="pin"
+              name="token"
               render={({ field }) => (
                 <FormItem>
                   <div className="flex flex-col justify-center gap-6">
@@ -94,14 +91,16 @@ export function InputOTPForm({ open, email }: Props) {
                     </FormControl>
                     <FormDescription>
                       Please enter the one-time password sent to your email
-                      {form.getValues('email') ? `: ${email}` : "."}
+                      {email ? `: ${email}` : "."}
                     </FormDescription>
                   </div>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button disabled={isSubmitting || !isValid} type="submit">
+              Submit
+            </Button>
           </form>
         </Form>
       </DialogContent>
