@@ -37,7 +37,7 @@ export function GameOverDialog() {
           ([_, player]) => player?.points ?? 27,
         ),
       );
-      Object.entries(lobbyPlayers).map(([id, player]) => {
+      Object.entries(lobbyPlayers).forEach(([id, player]) => {
         if (player.points === minPoints) {
           winners.push(id);
         }
