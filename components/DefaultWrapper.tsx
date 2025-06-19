@@ -32,7 +32,6 @@ export default function DefaultWrapper({
         >
           {children}
         </div>
-        {/* <div className="flex-1">{children}</div> */}
         <footer className="mx-auto flex w-full items-center justify-center gap-2 border-t py-16 text-center text-xs">
           <Link href={'/privacy'} className="underline">Privacy Policy</Link> &middot;
           <Link href={'/terms'} className="underline">Terms of Service</Link>
