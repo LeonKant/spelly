@@ -1,9 +1,6 @@
 import Link from "next/link";
 import { PropsWithChildren } from "react";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
-import { EnvVarWarning } from "./env-var-warning";
-import { ModeToggle } from "./theme-toggle";
-import HeaderAuth from "@/components/header-auth";
+import MainHeader from "./header/MainHeader";
 
 export default function DefaultWrapper({
   centerChildren = false,
@@ -14,25 +11,12 @@ export default function DefaultWrapper({
       <div
         className={`flex w-full flex-1 flex-col justify-between ${centerChildren && "items-center"}`}
       >
-        <nav className="flex h-fit w-full justify-center border-b border-b-foreground/10">
-          <div className="flex w-full max-w-5xl items-center justify-between p-3 px-5 text-sm">
-            <div className="flex items-center gap-5 font-semibold">
-              <Link href={"/"} className="text-4xl">
-                Spelly
-              </Link>
-            </div>
-            <div className="flex gap-5">
-              {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
-              <ModeToggle />
-            </div>
-          </div>
-        </nav>
+        <MainHeader />
         <div
           className={`flex ${centerChildren ? "max-w-5xl flex-col p-5" : "flex-1"}`}
         >
           {children}
         </div>
-        {/* <div className="flex-1">{children}</div> */}
         <footer className="mx-auto flex w-full items-center justify-center gap-2 border-t py-16 text-center text-xs">
           <Link href={'/privacy'} className="underline">Privacy Policy</Link> &middot;
           <Link href={'/terms'} className="underline">Terms of Service</Link>
