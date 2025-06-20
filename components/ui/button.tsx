@@ -42,6 +42,7 @@ function Button({
   asChild = false,
   ...props
 }: React.ComponentProps<"button"> &
+  React.ComponentProps<typeof Slot> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
   }) {
