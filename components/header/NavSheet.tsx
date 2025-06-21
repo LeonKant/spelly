@@ -45,6 +45,9 @@ export function SiteSettings({ signedIn, userName }: Props) {
           </Button>
         </>
       )}
+      <Button variant={"link"}>
+        <Link href="/rules">Rules</Link>
+      </Button>
       <ModeToggle />
     </div>
   );
@@ -58,7 +61,7 @@ export function SiteSettings({ signedIn, userName }: Props) {
           </Button>
         </SheetTrigger>
         {/* &_svg]:size-9 for 'x' button */}
-        <SheetContent className="py-16 px-4">
+        <SheetContent className="px-4 py-16">
           <SheetHeader className="hidden">
             <SheetTitle>Site User Settings</SheetTitle>
             <SheetDescription>
