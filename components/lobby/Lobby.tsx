@@ -20,12 +20,12 @@ export default function Lobby() {
 
   return (
     <div
-      className={`mx-auto flex max-w-screen-xl flex-1 flex-col justify-between p-8 lg:flex-row`}
+      className={`mx-auto flex max-w-(--breakpoint-xl) flex-1 flex-col justify-between p-8 lg:flex-row`}
     >
       <div className={`min-w-fit basis-1/5`}>
-        <SidebarTrigger className="[&_svg]:shrink-1 min-h-fit min-w-fit p-2 text-lg [&_svg]:size-7" />
+        <SidebarTrigger className="min-h-fit min-w-fit p-2 text-lg [&_svg]:size-7 [&_svg]:shrink-1" />
       </div>
-      <div className="my-8 flex w-full basis-3/5 flex-col justify-center items-center">
+      <div className="my-8 flex w-full basis-3/5 flex-col items-center justify-center">
         <GameLobbyForm />
         <GameOverDialog />
       </div>
