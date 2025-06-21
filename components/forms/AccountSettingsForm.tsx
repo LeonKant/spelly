@@ -54,8 +54,7 @@ export function AccountSettingsForm({ username }: Props) {
     redirect("/");
   };
 
-  const submitDisabled = form.getValues("username") === username;
-
+  const submitDisabled = form.watch("username") === username;
   const { isSubmitting, isValid } = form.formState;
 
   return (
