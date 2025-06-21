@@ -43,7 +43,7 @@ export function ClientSettingsDialog({ username }: Props) {
         <DialogTrigger asChild>
           <Button variant="outline">Settings</Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="flex h-[75%] max-h-fit flex-col overflow-scroll sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
@@ -69,8 +69,8 @@ export function ClientSettingsDialog({ username }: Props) {
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>
         </DrawerHeader>
-        <div className="px-4">
-          <SettingsTabs username={username}/>
+        <div className="overflow-scroll px-4">
+          <SettingsTabs username={username} />
         </div>
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>

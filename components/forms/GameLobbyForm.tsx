@@ -58,7 +58,7 @@ export default function GameLobbyForm() {
   return (
     <Form {...gameLobbyFormReturn}>
       <form
-        className="flex w-full max-w-screen-sm flex-col items-center gap-4 md:max-w-screen-md"
+        className="flex w-full max-w-(--breakpoint-sm) flex-col items-center gap-4 px-4 md:max-w-(--breakpoint-md)"
         autoComplete="off"
         onSubmit={gameLobbyFormReturn.handleSubmit(handlePlayerTurnSubmit)}
       >
@@ -68,7 +68,10 @@ export default function GameLobbyForm() {
           render={({ field: { ref, ...rest } }) => (
             <FormItem className="w-full">
               <FormControl>
-                <div className="flex w-full items-center rounded-md border-2 border-input bg-background px-3 py-2 text-2xl ring-offset-background has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 has-[:focus]:outline-none has-[:focus]:ring-2 has-[:focus]:ring-ring has-[:focus]:ring-offset-2">
+                <div
+                  className="border-input bg-background ring-offset-background has-focus:ring-ring flex items-center rounded-md border-2 p-2 text-2xl has-focus:ring-2 has-focus:ring-offset-2 has-focus:outline-hidden has-disabled:cursor-not-allowed has-disabled:opacity-50"
+                  onClick={() => inputRef.current?.focus()}
+                >
                   {gameState}
                   <input
                     inputMode="text"
@@ -80,7 +83,7 @@ export default function GameLobbyForm() {
                     }}
                     {...rest}
                     maxLength={1}
-                    className={`border-none bg-inherit outline-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60`}
+                    className={`placeholder:text-muted-foreground w-[2em] border-none bg-inherit outline-hidden file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:cursor-not-allowed disabled:opacity-60`}
                   />
                 </div>
               </FormControl>
