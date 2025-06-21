@@ -58,7 +58,7 @@ export function SiteSettings({ signedIn, userName }: Props) {
           </Button>
         </SheetTrigger>
         {/* &_svg]:size-9 for 'x' button */}
-        <SheetContent className="py-16">
+        <SheetContent className="py-16 px-4">
           <SheetHeader className="hidden">
             <SheetTitle>Site User Settings</SheetTitle>
             <SheetDescription>
