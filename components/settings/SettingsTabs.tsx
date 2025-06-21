@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -15,7 +14,6 @@ import { displayErrorToast } from "@/utils/client";
 interface Props {
   username: string;
 }
-
 export function SettingsTabs({ username }: Props) {
   const deleteAccount = async () => {
     const { error, message } = await deleteAccountAction();
@@ -25,7 +23,7 @@ export function SettingsTabs({ username }: Props) {
   };
   return (
     <Tabs defaultValue="account">
-      <TabsList className="grid w-full grid-cols-1">
+      <TabsList className={"w-full"}>
         <TabsTrigger value="account">Account</TabsTrigger>
       </TabsList>
       <TabsContent value="account" className="flex flex-col gap-4">
