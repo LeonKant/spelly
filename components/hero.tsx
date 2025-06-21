@@ -14,28 +14,24 @@ export default async function Hero() {
   let gameAlreadyStarted: boolean = false;
 
   if (user?.id) {
-    gameAlreadyStarted = await checkIfUserInGame(user?.id);
+    gameAlreadyStarted = await checkIfUserInGame(user.id);
   }
 
   return (
-    <div className="flex flex-col items-center gap-16 animate-fade-slide-in">
+    <div className="animate-fade-slide-in flex flex-col items-center gap-16">
       <div className="flex flex-col items-center gap-16">
         <h1 className="text-6xl font-bold lg:text-7xl">Spelly</h1>
-        <p className="mx-auto max-w-xl text-center text-3xl !leading-tight text-muted-foreground lg:text-4xl">
+        <p className="text-muted-foreground mx-auto max-w-xl text-center text-3xl leading-tight! lg:text-4xl">
           The best word game to ever be invented
         </p>
         {!user?.id ? (
           <p className="text-zinc-100">Sign in to start gaming baybee</p>
         ) : (
           <div className="flex-1">
-            {gameAlreadyStarted ? (
-              <RejoinGameButton />
-            ) : (
-              <StartJoinGameForm />
-            )}
+            {gameAlreadyStarted ? <RejoinGameButton /> : <StartJoinGameForm />}
           </div>
         )}
-        <div className="my-8 w-full bg-gradient-to-r from-transparent via-foreground/10 to-transparent p-[1px]" />
+        <div className="via-foreground/10 my-8 w-full bg-linear-to-r from-transparent to-transparent p-px" />
       </div>
     </div>
   );
