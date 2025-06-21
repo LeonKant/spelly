@@ -80,7 +80,7 @@ export const SpellyLobbyProvider = ({
     online_at: new Date().toISOString(),
   };
 
-  const channelRef = useRef<RealtimeChannel>();
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
   const handleLobbyPlayerInsertOrUpdate = (
     payload:
