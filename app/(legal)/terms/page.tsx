@@ -4,7 +4,7 @@ export default function TermsPage() {
   return (
     <DefaultWrapper centerChildren>
       <div
-        className={`animate-fade-slide-in space-y-4 [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-2 [&>ul>li>p]:inline`}
+        className={`animate-fade-slide-in space-y-4 [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-2`}
       >
         <h1>Terms and Conditions</h1>
         <p>

@@ -1,12 +1,19 @@
 import DefaultWrapper from "@/components/DefaultWrapper";
+import { PropsWithChildren } from "react";
+
+const PrivacySection = ({ children }: PropsWithChildren) => (
+  <section
+    className={`space-y-4 [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-2`}
+  >
+    {children}
+  </section>
+);
 
 export default function PrivacyPage() {
   return (
     <DefaultWrapper centerChildren>
       <div className="animate-fade-slide-in space-y-6">
-        <section
-          className={`space-y-4 [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-2 [&>ul>li>p]:inline`}
-        >
+        <PrivacySection>
           <h1>Privacy Policy</h1>
           <hr className="border-white" />
           <p>
@@ -43,95 +50,69 @@ export default function PrivacyPage() {
           <p>For the purposes of this Privacy Policy:</p>
           <ul>
             <li>
-              <p>
-                <strong>Account</strong> means a unique account created for You
-                to access our Service or parts of our Service.
-              </p>
+              <strong>Account</strong> means a unique account created for You to
+              access our Service or parts of our Service.
             </li>
             <li>
-              <p>
-                <strong>Affiliate</strong> means an entity that controls, is
-                controlled by or is under common control with a party, where
-                &quot;control&quot; means ownership of 50% or more of the
-                shares, equity interest or other securities entitled to vote for
-                election of directors or other managing authority.
-              </p>
+              <strong>Affiliate</strong> means an entity that controls, is
+              controlled by or is under common control with a party, where
+              &quot;control&quot; means ownership of 50% or more of the shares,
+              equity interest or other securities entitled to vote for election
+              of directors or other managing authority.
             </li>
             <li>
-              <p>
-                <strong>Company</strong> (referred to as either &quot;the
-                Company&quot;, &quot;We&quot;, &quot;Us&quot; or &quot;Our&quot;
-                in this Agreement) refers to Spelly.
-              </p>
+              <strong>Company</strong> (referred to as either &quot;the
+              Company&quot;, &quot;We&quot;, &quot;Us&quot; or &quot;Our&quot;
+              in this Agreement) refers to Spelly.
             </li>
             <li>
-              <p>
-                <strong>Cookies</strong> are small files that are placed on Your
-                computer, mobile device or any other device by a website,
-                containing the details of Your browsing history on that website
-                among its many uses.
-              </p>
+              <strong>Cookies</strong> are small files that are placed on Your
+              computer, mobile device or any other device by a website,
+              containing the details of Your browsing history on that website
+              among its many uses.
             </li>
             <li>
-              <p>
-                <strong>Country</strong> refers to: California, United States
-              </p>
+              <strong>Country</strong> refers to: California, United States
             </li>
             <li>
-              <p>
-                <strong>Device</strong> means any device that can access the
-                Service such as a computer, a cellphone or a digital tablet.
-              </p>
+              <strong>Device</strong> means any device that can access the
+              Service such as a computer, a cellphone or a digital tablet.
             </li>
             <li>
-              <p>
-                <strong>Personal Data</strong> is any information that relates
-                to an identified or identifiable individual.
-              </p>
+              <strong>Personal Data</strong> is any information that relates to
+              an identified or identifiable individual.
             </li>
             <li>
-              <p>
-                <strong>Service</strong> refers to the Website.
-              </p>
+              <strong>Service</strong> refers to the Website.
             </li>
             <li>
-              <p>
-                <strong>Service Provider</strong> means any natural or legal
-                person who processes the data on behalf of the Company. It
-                refers to third-party companies or individuals employed by the
-                Company to facilitate the Service, to provide the Service on
-                behalf of the Company, to perform services related to the
-                Service or to assist the Company in analyzing how the Service is
-                used.
-              </p>
+              <strong>Service Provider</strong> means any natural or legal
+              person who processes the data on behalf of the Company. It refers
+              to third-party companies or individuals employed by the Company to
+              facilitate the Service, to provide the Service on behalf of the
+              Company, to perform services related to the Service or to assist
+              the Company in analyzing how the Service is used.
             </li>
             <li>
-              <p>
-                <strong>Usage Data</strong> refers to data collected
-                automatically, either generated by the use of the Service or
-                from the Service infrastructure itself (for example, the
-                duration of a page visit).
-              </p>
+              <strong>Usage Data</strong> refers to data collected
+              automatically, either generated by the use of the Service or from
+              the Service infrastructure itself (for example, the duration of a
+              page visit).
             </li>
             <li>
-              <p>
-                <strong>Website</strong> refers to Spelly, accessible from{" "}
-                <a
-                  href="https://www.spelly.org"
-                  rel="external nofollow noopener"
-                  target="_blank"
-                >
-                  https://www.spelly.org
-                </a>
-              </p>
+              <strong>Website</strong> refers to Spelly, accessible from{" "}
+              <a
+                href="https://www.spelly.org"
+                rel="external nofollow noopener"
+                target="_blank"
+              >
+                https://www.spelly.org
+              </a>
             </li>
             <li>
-              <p>
-                <strong>You</strong> means the individual accessing or using the
-                Service, or the company, or other legal entity on behalf of
-                which such individual is accessing or using the Service, as
-                applicable.
-              </p>
+              <strong>You</strong> means the individual accessing or using the
+              Service, or the company, or other legal entity on behalf of which
+              such individual is accessing or using the Service, as applicable.
             </li>
           </ul>
           <h2>Collecting and Using Your Personal Data</h2>
@@ -143,13 +124,9 @@ export default function PrivacyPage() {
             identify You. Personally identifiable information may include, but
             is not limited to:
           </p>
-          <ul className="">
-            <li>
-              <p className="inline">Email address</p>
-            </li>
-            <li>
-              <p className="inline">Usage Data</p>
-            </li>
+          <ul>
+            <li>Email address</li>
+            <li>Usage Data</li>
           </ul>
           <h4>Usage Data</h4>
           <p>Usage Data is collected automatically when using the Service.</p>
@@ -221,9 +198,7 @@ export default function PrivacyPage() {
           </p>
           <ul>
             <li>
-              <p>
-                <strong>Necessary / Essential Cookies</strong>
-              </p>
+              <strong>Necessary / Essential Cookies</strong>
               <p>Type: Session Cookies</p>
               <p>Administered by: Us</p>
               <p>
@@ -236,9 +211,7 @@ export default function PrivacyPage() {
               </p>
             </li>
             <li>
-              <p>
-                <strong>Cookies Policy / Notice Acceptance Cookies</strong>
-              </p>
+              <strong>Cookies Policy / Notice Acceptance Cookies</strong>
               <p>Type: Persistent Cookies</p>
               <p>Administered by: Us</p>
               <p>
@@ -247,9 +220,7 @@ export default function PrivacyPage() {
               </p>
             </li>
             <li>
-              <p>
-                <strong>Functionality Cookies</strong>
-              </p>
+              <strong>Functionality Cookies</strong>
               <p>Type: Persistent Cookies</p>
               <p>Administered by: Us</p>
               <p>
@@ -271,72 +242,56 @@ export default function PrivacyPage() {
           <p>The Company may use Personal Data for the following purposes:</p>
           <ul>
             <li>
-              <p>
-                <strong>To provide and maintain our Service</strong>, including
-                to monitor the usage of our Service.
-              </p>
+              <strong>To provide and maintain our Service</strong>, including to
+              monitor the usage of our Service.
             </li>
             <li>
-              <p>
-                <strong>To manage Your Account:</strong> to manage Your
-                registration as a user of the Service. The Personal Data You
-                provide can give You access to different functionalities of the
-                Service that are available to You as a registered user.
-              </p>
+              <strong>To manage Your Account:</strong> to manage Your
+              registration as a user of the Service. The Personal Data You
+              provide can give You access to different functionalities of the
+              Service that are available to You as a registered user.
             </li>
             <li>
-              <p>
-                <strong>For the performance of a contract:</strong> the
-                development, compliance and undertaking of the purchase contract
-                for the products, items or services You have purchased or of any
-                other contract with Us through the Service.
-              </p>
+              <strong>For the performance of a contract:</strong> the
+              development, compliance and undertaking of the purchase contract
+              for the products, items or services You have purchased or of any
+              other contract with Us through the Service.
             </li>
             <li>
-              <p>
-                <strong>To contact You:</strong> To contact You by email,
-                telephone calls, SMS, or other equivalent forms of electronic
-                communication, such as a mobile application's push notifications
-                regarding updates or informative communications related to the
-                functionalities, products or contracted services, including the
-                security updates, when necessary or reasonable for their
-                implementation.
-              </p>
+              <strong>To contact You:</strong> To contact You by email,
+              telephone calls, SMS, or other equivalent forms of electronic
+              communication, such as a mobile application's push notifications
+              regarding updates or informative communications related to the
+              functionalities, products or contracted services, including the
+              security updates, when necessary or reasonable for their
+              implementation.
             </li>
             <li>
-              <p>
-                <strong>To provide You</strong> with news, special offers and
-                general information about other goods, services and events which
-                we offer that are similar to those that you have already
-                purchased or enquired about unless You have opted not to receive
-                such information.
-              </p>
+              <strong>To provide You</strong> with news, special offers and
+              general information about other goods, services and events which
+              we offer that are similar to those that you have already purchased
+              or enquired about unless You have opted not to receive such
+              information.
             </li>
             <li>
-              <p>
-                <strong>To manage Your requests:</strong> To attend and manage
-                Your requests to Us.
-              </p>
+              <strong>To manage Your requests:</strong> To attend and manage
+              Your requests to Us.
             </li>
             <li>
-              <p>
-                <strong>For business transfers:</strong> We may use Your
-                information to evaluate or conduct a merger, divestiture,
-                restructuring, reorganization, dissolution, or other sale or
-                transfer of some or all of Our assets, whether as a going
-                concern or as part of bankruptcy, liquidation, or similar
-                proceeding, in which Personal Data held by Us about our Service
-                users is among the assets transferred.
-              </p>
+              <strong>For business transfers:</strong> We may use Your
+              information to evaluate or conduct a merger, divestiture,
+              restructuring, reorganization, dissolution, or other sale or
+              transfer of some or all of Our assets, whether as a going concern
+              or as part of bankruptcy, liquidation, or similar proceeding, in
+              which Personal Data held by Us about our Service users is among
+              the assets transferred.
             </li>
             <li>
-              <p>
-                <strong>For other purposes</strong>: We may use Your information
-                for other purposes, such as data analysis, identifying usage
-                trends, determining the effectiveness of our promotional
-                campaigns and to evaluate and improve our Service, products,
-                services, marketing and your experience.
-              </p>
+              <strong>For other purposes</strong>: We may use Your information
+              for other purposes, such as data analysis, identifying usage
+              trends, determining the effectiveness of our promotional campaigns
+              and to evaluate and improve our Service, products, services,
+              marketing and your experience.
             </li>
           </ul>
           <p>
@@ -528,11 +483,9 @@ export default function PrivacyPage() {
           <ul>
             <li>By email: auth.spelly@gmail.com</li>
           </ul>
-        </section>
+        </PrivacySection>
 
-        <section
-          className={`space-y-4 [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-2 [&>ul>li>p]:inline`}
-        >
+        <PrivacySection>
           <h1>Cookies Policy</h1>
           <hr className="border-white" />
           <p>
@@ -670,48 +623,45 @@ export default function PrivacyPage() {
                   href="https://support.google.com/accounts/answer/32050"
                   rel="external nofollow noopener"
                   target="_blank"
+                  className="break-all"
                 >
                   https://support.google.com/accounts/answer/32050
                 </a>
               </p>
             </li>
             <li>
-              <p>
-                For the Internet Explorer web browser, please visit this page
-                from Microsoft:{" "}
-                <a
-                  href="http://support.microsoft.com/kb/278835"
-                  rel="external nofollow noopener"
-                  target="_blank"
-                >
-                  http://support.microsoft.com/kb/278835
-                </a>
-              </p>
+              For the Internet Explorer web browser, please visit this page from
+              Microsoft:{" "}
+              <a
+                href="http://support.microsoft.com/kb/278835"
+                rel="external nofollow noopener"
+                target="_blank"
+                className="break-all"
+              >
+                http://support.microsoft.com/kb/278835
+              </a>
             </li>
             <li>
-              <p>
-                For the Firefox web browser, please visit this page from
-                Mozilla:{" "}
-                <a
-                  href="https://support.mozilla.org/en-US/kb/delete-cookies-remove-info-websites-stored"
-                  rel="external nofollow noopener"
-                  target="_blank"
-                >
-                  https://support.mozilla.org/en-US/kb/delete-cookies-remove-info-websites-stored
-                </a>
-              </p>
+              For the Firefox web browser, please visit this page from Mozilla:{" "}
+              <a
+                href="https://support.mozilla.org/en-US/kb/delete-cookies-remove-info-websites-stored"
+                rel="external nofollow noopener"
+                target="_blank"
+                className="break-all"
+              >
+                https://support.mozilla.org/en-US/kb/delete-cookies-remove-info-websites-stored
+              </a>
             </li>
             <li>
-              <p>
-                For the Safari web browser, please visit this page from Apple:{" "}
-                <a
-                  href="https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac"
-                  rel="external nofollow noopener"
-                  target="_blank"
-                >
-                  https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac
-                </a>
-              </p>
+              For the Safari web browser, please visit this page from Apple:{" "}
+              <a
+                href="https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac"
+                rel="external nofollow noopener"
+                target="_blank"
+                className="break-all"
+              >
+                https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac
+              </a>
             </li>
           </ul>
           <p>
@@ -734,7 +684,7 @@ export default function PrivacyPage() {
           <ul>
             <li>By email: auth.spelly@gmail.com</li>
           </ul>
-        </section>
+        </PrivacySection>
       </div>
     </DefaultWrapper>
   );
