@@ -3,7 +3,9 @@ import DefaultWrapper from "@/components/DefaultWrapper";
 export default function TermsPage() {
   return (
     <DefaultWrapper centerChildren>
-      <div className={`animate-fade-slide-in space-y-4 [&>ul>li>p]:inline [&_h1]:text-3xl [&_h1]:font-semibold [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:underline [&_h3]:text-xl [&_h3]:font-semibold [&_h4]:text-xl [&_h4]:font-semibold [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-2`}>
+      <div
+        className={`animate-fade-slide-in space-y-4 [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-2`}
+      >
         <h1>Terms and Conditions</h1>
         <p>
           <em>Last Updated: February 04, 2025</em>

@@ -20,7 +20,7 @@ export default function Lobby() {
 
   return (
     <div
-      className={`mx-auto flex max-w-(--breakpoint-xl) flex-1 flex-col justify-between p-8 lg:flex-row`}
+      className={`mx-auto flex max-w-(--breakpoint-xl) flex-1 flex-col justify-between lg:flex-row`}
     >
       <div className={`min-w-fit basis-1/5`}>
         <SidebarTrigger className="min-h-fit min-w-fit p-2 text-lg [&_svg]:size-7 [&_svg]:shrink-1" />
