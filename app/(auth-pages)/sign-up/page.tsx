@@ -3,8 +3,8 @@ import { PageTemplate } from "@/components/PageTemplate";
 
 export default async function Signup() {
   return (
-    <PageTemplate className="animate-fade-slide-in">
+    <div className="animate-fade-slide-in">
       <SignUpForm />
-    </PageTemplate>
+    </div>
   );
 }
