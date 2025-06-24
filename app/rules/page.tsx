@@ -1,9 +1,9 @@
-import DefaultWrapper from "@/components/DefaultWrapper";
+import { PageTemplate } from "@/components/PageTemplate";
 
 export default function RulesPage() {
   return (
-    <DefaultWrapper centerChildren innerClassName="flex-1 w-full">
-      <div className="animate-fade-slide-in flex-1 space-y-4">
+    <PageTemplate className="flex-1 items-center">
+      <div className="animate-fade-slide-in w-full max-w-5xl flex-1 space-y-4 px-12">
         <h1>Rules</h1>
         <hr className="border-white" />
         <div className="italic">New modes coming soon!</div>
@@ -25,6 +25,6 @@ export default function RulesPage() {
           </ol>
         </section>
       </div>
-    </DefaultWrapper>
+    </PageTemplate>
   );
 }

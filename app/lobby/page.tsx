@@ -9,9 +9,10 @@ import { redirect } from "next/navigation";
 import Lobby from "@/components/lobby/Lobby";
 import { LobbyPlayersT, LobbyPlayerStatusT } from "@/types/lobby-context.type";
 import { LobbySidebar } from "@/components/lobby/LobbySidebar";
-import DefaultWrapper from "@/components/DefaultWrapper";
 import { SpellyLobbyProvider } from "@/context/LobbyContext";
 import { SpellyLobbyT } from "@/types/db.type";
+import { PageTemplate } from "@/components/PageTemplate";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const LobbyPage = async () => {
   const supabase = await createClient();
@@ -35,18 +36,20 @@ const LobbyPage = async () => {
   const prevRounds = await getLobbyPrevRounds(lobbyInfo.id);
 
   return (
-    <SpellyLobbyProvider
-      userID={user.id}
-      userName={userName}
-      lobbyPlayers={lobbyProfiles}
-      lobbyState={lobbyInfo}
-      prevRoundsState={prevRounds}
-    >
-      <LobbySidebar />
-      <DefaultWrapper>
-        <Lobby />
-      </DefaultWrapper>
-    </SpellyLobbyProvider>
+    <SidebarProvider defaultOpen={false} className="relative min-h-full flex-1">
+      <SpellyLobbyProvider
+        userID={user.id}
+        userName={userName}
+        lobbyPlayers={lobbyProfiles}
+        lobbyState={lobbyInfo}
+        prevRoundsState={prevRounds}
+      >
+        <LobbySidebar />
+        <PageTemplate className="flex-1 items-center">
+          <Lobby />
+        </PageTemplate>
+      </SpellyLobbyProvider>
+    </SidebarProvider>
   );
 };
 export default LobbyPage;

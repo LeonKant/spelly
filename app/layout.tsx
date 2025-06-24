@@ -2,8 +2,8 @@ import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { CLIENT } from "@/config/var.config";
+import DefaultLayout from "@/components/DefaultLayout";
 
 export const metadata = {
   metadataBase: new URL(CLIENT.projectURL),
@@ -19,16 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <body className="bg-background text-foreground">
-        <SidebarProvider defaultOpen={false}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </SidebarProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <DefaultLayout>{children}</DefaultLayout>
+        </ThemeProvider>
         <Toaster />
       </body>
     </html>

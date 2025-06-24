@@ -1,4 +1,5 @@
-import DefaultWrapper from "@/components/DefaultWrapper";
+import DefaultWrapper from "@/components/DefaultLayout";
+import { PageTemplate } from "@/components/PageTemplate";
 
 export default async function Layout({
   children,
@@ -6,10 +7,10 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   return (
-    <DefaultWrapper centerChildren>
+    <PageTemplate className="items-center">
       <div className="flex max-w-7xl flex-col items-start gap-12">
         {children}
       </div>
-    </DefaultWrapper>
+    </PageTemplate>
   );
 }

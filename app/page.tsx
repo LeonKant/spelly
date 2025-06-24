@@ -1,10 +1,10 @@
-import DefaultWrapper from "@/components/DefaultWrapper";
-import Hero from "@/components/hero";
+import Hero from "@/components/Hero";
+import { PageTemplate } from "@/components/PageTemplate";
 
-export default async function Index() {
+export default function Index() {
   return (
-    <DefaultWrapper centerChildren>
+    <PageTemplate className="justify-center">
       <Hero />
-    </DefaultWrapper>
+    </PageTemplate>
   );
 }

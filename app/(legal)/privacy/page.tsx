@@ -1,4 +1,4 @@
-import DefaultWrapper from "@/components/DefaultWrapper";
+import { PageTemplate } from "@/components/PageTemplate";
 import { PropsWithChildren } from "react";
 
 const PrivacySection = ({ children }: PropsWithChildren) => (
@@ -11,8 +11,8 @@ const PrivacySection = ({ children }: PropsWithChildren) => (
 
 export default function PrivacyPage() {
   return (
-    <DefaultWrapper centerChildren>
-      <div className="animate-fade-slide-in space-y-6">
+    <PageTemplate className="items-center">
+      <div className="flex-1 animate-fade-slide-in max-w-5xl space-y-6 px-12">
         <PrivacySection>
           <h1>Privacy Policy</h1>
           <hr className="border-white" />
@@ -686,6 +686,6 @@ export default function PrivacyPage() {
           </ul>
         </PrivacySection>
       </div>
-    </DefaultWrapper>
+    </PageTemplate>
   );
 }

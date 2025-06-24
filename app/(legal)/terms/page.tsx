@@ -1,11 +1,9 @@
-import DefaultWrapper from "@/components/DefaultWrapper";
+import { PageTemplate } from "@/components/PageTemplate";
 
 export default function TermsPage() {
   return (
-    <DefaultWrapper centerChildren>
-      <div
-        className={`animate-fade-slide-in space-y-4 [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-2`}
-      >
+    <PageTemplate className="items-center">
+      <div className="animate-fade-slide-in max-w-5xl space-y-6 px-12">
         <h1>Terms and Conditions</h1>
         <p>
           <em>Last Updated: February 04, 2025</em>
@@ -162,6 +160,6 @@ export default function TermsPage() {
           understood, and agreed to these Terms and Conditions.
         </p>
       </div>
-    </DefaultWrapper>
+    </PageTemplate>
   );
 }
