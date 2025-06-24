@@ -1,6 +1,6 @@
 "use client";
 import GameLobbyForm from "../forms/GameLobbyForm";
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { LobbyPlayerList } from "./LobbyPlayerList";
 import { GameOverDialog } from "./GameOverDialog";
 import { useSpellyLobby } from "@/context/LobbyContext";
@@ -20,7 +20,7 @@ export default function Lobby() {
 
   return (
     <div
-      className={`mx-auto flex max-w-(--breakpoint-xl) flex-1 flex-col justify-between lg:flex-row`}
+      className={`flex w-full max-w-(--breakpoint-xl) flex-1 flex-col justify-between px-12 lg:flex-row`}
     >
       <div className={`min-w-fit basis-1/5`}>
         <SidebarTrigger className="min-h-fit min-w-fit p-2 text-lg [&_svg]:size-7 [&_svg]:shrink-1" />
