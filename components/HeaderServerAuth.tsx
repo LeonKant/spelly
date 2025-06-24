@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { getUserName } from "@/db/queries/select";
-import { SiteSettings } from "./header/NavSheet";
+import { NavBarSheet } from "./header/NavBarSheet";
 
 export default async function HeaderServerAuth() {
   const supabase = await createClient();
@@ -11,5 +11,5 @@ export default async function HeaderServerAuth() {
 
   const userName = user ? await getUserName(user.id) : null;
 
-  return <SiteSettings signedIn={!!user} userName={userName} />;
+  return <NavBarSheet signedIn={!!user} userName={userName} />;
 }
