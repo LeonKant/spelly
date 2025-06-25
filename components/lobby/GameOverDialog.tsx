@@ -72,7 +72,7 @@ export function GameOverDialog() {
           <DialogTitle>Game Over</DialogTitle>
           <DialogDescription>{gameOverMessage}</DialogDescription>
         </DialogHeader>
-        <DialogFooter className="flex-col gap-4 sm:justify-start sm:gap-0">
+        <DialogFooter className="flex flex-col gap-4 sm:justify-start sm:gap-2">
           {isHost ? (
             <>
               <Button

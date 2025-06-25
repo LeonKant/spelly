@@ -21,7 +21,7 @@ export function LobbySidebar() {
     lobbyState: { name: lobbyName, hostId, id: lobbyId },
   } = useSpellyLobby();
   return (
-    <Sidebar variant="floating">
+    <Sidebar className="top-16 bottom-20 h-auto flex-1" variant="floating">
       <LobbySidebarHeader />
       <SidebarContent>
         <SidebarGroup>
@@ -33,7 +33,7 @@ export function LobbySidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="mb-12 md:mb-0">
         <SidebarGroupLabel className="text-sm">Game Options</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
@@ -48,7 +48,7 @@ export function LobbySidebar() {
               {hostId === userID && (
                 <SidebarMenuButton
                   asChild
-                  className="cursor-pointer text-base text-destructive"
+                  className="text-destructive cursor-pointer text-base"
                   onClick={() => hostEndGameAction()}
                 >
                   <span>End Game</span>

@@ -41,7 +41,7 @@ const SignInForm = () => {
     }
     const { error } = await signInAction(values);
     if (error) {
-      displayErrorToast(error.message);
+      displayErrorToast("Error signing in");
       return;
     }
     setEmailState(values.email);

@@ -1,12 +1,11 @@
-import DefaultWrapper from "@/components/DefaultWrapper";
+import { LegalSection } from "@/components/legal/LegalSection";
 
 export default function TermsPage() {
   return (
-    <DefaultWrapper centerChildren>
-      <div
-        className={`animate-fade-slide-in space-y-4 [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-2`}
-      >
+    <div className="animate-fade-slide-in">
+      <LegalSection>
         <h1>Terms and Conditions</h1>
+        <hr className="border-white" />
         <p>
           <em>Last Updated: February 04, 2025</em>
         </p>
@@ -161,7 +160,7 @@ export default function TermsPage() {
           By creating an account, you acknowledge that you have read,
           understood, and agreed to these Terms and Conditions.
         </p>
-      </div>
-    </DefaultWrapper>
+      </LegalSection>
+    </div>
   );
 }
