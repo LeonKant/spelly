@@ -19,16 +19,15 @@ import {
 } from "@/components/ui/input-otp";
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { OTPSchema, OTPSchemaT } from "@/lib/form-schemas/OTPSchema";
-import { createClient } from "@/utils/supabase/client";
 import { displayErrorToast } from "@/utils/client";
-import { redirect } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { verifyOtpAction } from "@/actions/form";
 
 interface Props {
   email: string | null;
 }
-
 export function InputOTPForm({ email }: Props) {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const form = useForm<OTPSchemaT>({
     resolver: zodResolver(OTPSchema),
     defaultValues: {
@@ -38,24 +37,21 @@ export function InputOTPForm({ email }: Props) {
   });
 
   const onSubmit = async (data: OTPSchemaT) => {
-    const supabase = createClient();
-    const { error } = await supabase.auth.verifyOtp({
-      ...data,
-      type: "email",
-    });
+    setIsSubmitting(true);
+    const { error } = await verifyOtpAction(data);
     if (error) {
-      displayErrorToast(error.message);
+      displayErrorToast("Error verifying OTP code.");
+      setIsSubmitting(false);
       return;
     }
-    redirect("/");
+    window.location.href = "/";
   };
 
   useEffect(() => {
     form.setValue("email", email || "");
   }, [email]);
 
-
-  const { isSubmitting, isValid } = form.formState;
+  const { isValid } = form.formState;
 
   return (
     <Dialog open={!!email}>

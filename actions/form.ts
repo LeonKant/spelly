@@ -9,6 +9,7 @@ import { modifyUserName } from "@/db/queries/update";
 import { ActionResponse } from "@/types/lobby-actions.type";
 import { checkIfUserInGame } from "@/db/queries/select";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { OTPSchemaT } from "@/lib/form-schemas/OTPSchema";
 
 export const signUpAction = async (values: SignUpSchemaT) => {
   const supabase = await createClient();
@@ -42,6 +43,16 @@ export const signInAction = async (values: SignInSchemaT) => {
   });
 
   return { error };
+};
+
+export const verifyOtpAction = async (data: OTPSchemaT) => {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.verifyOtp({
+    ...data,
+    type: "email",
+  });
+
+  return { error: !!error };
 };
 
 export const signOutAction = async () => {
