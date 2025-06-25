@@ -3,7 +3,7 @@ import StartJoinGameForm from "./forms/StartJoinGameForm";
 import { checkIfUserInGame } from "@/db/queries/select";
 import RejoinGameButton from "@/components/RejoinGameButton";
 
-export default async function Hero() {
+export async function Hero() {
   const supabase = await createClient();
 
   const {
