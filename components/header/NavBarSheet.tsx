@@ -16,6 +16,7 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import { Menu } from "lucide-react";
+import { Fragment } from "react";
 
 interface Props {
   signedIn: boolean;
@@ -38,39 +39,49 @@ export function NavBarSheet({ signedIn, userName }: Props) {
           SheetClose,
           {
             asChild: true,
-            className:
-              "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-primary underline-offset-4 hover:underline",
           },
         ]
-      : //                    Typescript BS
-        [Button, { variant: "link" as "link" }];
+      : [Fragment, {}];
+
+    const buttonData: { label: string; href: string }[] = [
+      ...(!signedIn
+        ? [
+            { label: "Sign In", href: "/sign-in" },
+            { label: "Sign Up", href: "/sign-up" },
+          ]
+        : []),
+      { label: "Rules", href: "/rules" },
+    ];
+
     return (
       <div
         className={`flex ${isMobile ? "flex-col gap-3" : "items-center gap-2"}`}
       >
-        {signedIn ? (
-          <>
+        {signedIn && (
+          <div className="px-3">
             {userName || "USERNAME error! (try refreshing page)"}
+          </div>
+        )}
+        {buttonData.map(({ label, href }, ind) => (
+          <SheetCloseWrapper
+            {...sheetCloseWrapperProps}
+            key={`nav-bar-sheet-button-${ind}`}
+          >
+            <Button asChild size="sm" variant="ghost">
+              <Link href={href}>{label}</Link>
+            </Button>
+          </SheetCloseWrapper>
+        ))}
+        {signedIn && (
+          <>
+            {userName && <ClientSettingsDialog username={userName} />}
             <form action={signOutAction}>
-              <Button type="submit" variant={"outline"} className="w-full">
+              <Button type="submit" variant="ghost" className="w-full">
                 Sign out
               </Button>
             </form>
-            {userName && <ClientSettingsDialog username={userName} />}
-          </>
-        ) : (
-          <>
-            <Button asChild size="sm" variant={"outline"}>
-              <Link href="/sign-in">Sign in</Link>
-            </Button>
-            <Button asChild size="sm" variant={"default"}>
-              <Link href="/sign-up">Sign up</Link>
-            </Button>
           </>
         )}
-        <SheetCloseWrapper {...sheetCloseWrapperProps}>
-          <Link href="/rules">Rules</Link>
-        </SheetCloseWrapper>
         <ModeToggle />
       </div>
     );
