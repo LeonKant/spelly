@@ -1,4 +1,4 @@
-import { Hero } from "@/components/Hero";
+import { Hero } from "./../components/Hero";
 import { PageTemplate } from "@/components/PageTemplate";
 
 export default function Index() {
