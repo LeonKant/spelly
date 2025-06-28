@@ -1,4 +1,3 @@
-import DefaultWrapper from "@/components/DefaultLayout";
 import { PageTemplate } from "@/components/PageTemplate";
 
 export default async function Layout({
