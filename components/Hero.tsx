@@ -18,8 +18,8 @@ export async function Hero() {
   }
 
   return (
-    <div className="animate-fade-slide-in flex flex-col items-center gap-16 px-12">
-      <div className="flex flex-col items-center gap-16">
+    <div className="flex flex-col items-center gap-16 px-12">
+      <div className="animate-fade-slide-in flex flex-col items-center gap-16">
         <h1 className="text-6xl font-bold lg:text-7xl">Spelly</h1>
         <p className="text-muted-foreground mx-auto max-w-xl text-center text-3xl leading-tight! lg:text-4xl">
           The best word game to ever be invented
