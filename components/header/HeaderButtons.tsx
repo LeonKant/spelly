@@ -33,6 +33,7 @@ export const HeaderButtons = ({
         ]
       : []),
     { label: "Rules", href: "/rules" },
+    { label: "About", href: "/about" },
   ];
 
   return (
