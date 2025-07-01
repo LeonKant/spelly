@@ -217,7 +217,12 @@ export const playerTurnSubmitAction = async (
   values: z.infer<typeof gameLobbySchema>,
 ) => {
   return await withClientAndLobbyInfo(
-    async ({ lobbyInfo, user }): Promise<ActionResponse> => {
+    async ({
+      lobbyInfo,
+      user,
+    }): Promise<
+      ActionResponse<{ lostRound?: boolean; gameOver?: boolean }>
+    > => {
       const { gameInput } = values;
       const {
         gameState,
@@ -236,10 +241,14 @@ export const playerTurnSubmitAction = async (
 
       if (wordExists) {
         // assign state to be new word, change player
-        return await updateLobbyStateAction(lobbyInfo.id, {
+        const updateResponse = await updateLobbyStateAction(lobbyInfo.id, {
           gameState: newWord,
           currentPlayer: (currentPlayer + 1) % lobbyPlayerIds.length,
         });
+
+        return updateResponse.error
+          ? updateResponse
+          : { error: false, lostRound: false };
       }
       // if word doesn't exist, increase current letter
       const nextLetter = currentLetter + 1;
@@ -266,7 +275,7 @@ export const playerTurnSubmitAction = async (
         lobbyId,
       });
 
-      return { error: false };
+      return { error: false, lostRound: true };
     },
   );
 };
