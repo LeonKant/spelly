@@ -1,5 +1,4 @@
 "use server";
-
 import {
   deleteLobby,
   deletePlayerFromLobby,
@@ -255,9 +254,21 @@ export const playerTurnSubmitAction = async (
 
       // if letter is 'z', game over
       if (nextLetter >= 26) {
-        return await updateLobbyStateAction(lobbyInfo.id, {
+        const updateResponse = await updateLobbyStateAction(lobbyInfo.id, {
           gameOver: true,
         });
+
+        await incrementPlayerPoints(
+          lobbyPlayerIds[currentPlayer],
+          lobbyInfo.id,
+        );
+        await addToPrevRounds(lobbyPlayerIds[currentPlayer], {
+          gameState: newWord,
+          lobbyId,
+        });
+        return updateResponse.error
+          ? updateResponse
+          : { error: false, gameOver: true };
       }
 
       // TODO: change to db transaction

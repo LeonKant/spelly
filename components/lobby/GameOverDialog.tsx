@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Dialog,
   DialogContent,
@@ -9,7 +8,6 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-
 import { useSpellyLobby } from "@/context/LobbyContext";
 import { useEffect, useState } from "react";
 import {
@@ -17,6 +15,7 @@ import {
   hostResetGameAction,
   leaveGameAction,
 } from "@/actions/lobby";
+import { useLobbyAudio } from "@/context/LobbyAudioContext";
 
 export function GameOverDialog() {
   const [gameOverMessage, setGameOverMessage] = useState<string | null>(null);
@@ -26,7 +25,10 @@ export function GameOverDialog() {
     lobbyPlayers,
     userNameCacheState,
     isHost,
+    userID,
   } = useSpellyLobby();
+
+  const { playGameEndMusic } = useLobbyAudio();
 
   useEffect(() => {
     if (gameOver) {
@@ -42,6 +44,8 @@ export function GameOverDialog() {
           winners.push(id);
         }
       });
+
+      playGameEndMusic(winners.includes(userID));
 
       const gameOverMessage =
         winners.length === 1
@@ -63,7 +67,7 @@ export function GameOverDialog() {
     } else {
       setOpenDialog(false);
     }
-  }, [gameOver]);
+  }, [gameOver, lobbyPlayers]);
 
   return (
     <Dialog open={openDialog}>
