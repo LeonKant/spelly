@@ -26,48 +26,32 @@ export function GameOverDialog() {
     userNameCacheState,
     isHost,
     userID,
+    winners,
   } = useSpellyLobby();
 
-  const { playGameEndMusic } = useLobbyAudio();
-
   useEffect(() => {
-    if (gameOver) {
-      const winners: string[] = [];
-
-      const minPoints: number = Math.min(
-        ...Object.entries(lobbyPlayers).map(
-          ([_, player]) => player?.points ?? 27,
-        ),
-      );
-      Object.entries(lobbyPlayers).forEach(([id, player]) => {
-        if (player.points === minPoints) {
-          winners.push(id);
-        }
-      });
-
-      playGameEndMusic(winners.includes(userID));
-
-      const gameOverMessage =
-        winners.length === 1
-          ? `${userNameCacheState[winners[0]]} is the winner!`
-          : `${
-              winners.length === 2
-                ? `${userNameCacheState[winners[0]]} and ${userNameCacheState[winners[1]]}`
-                : winners
-                    .map((w, ind) =>
-                      ind === winners.length - 1
-                        ? `and ${userNameCacheState[w]}`
-                        : `${userNameCacheState[w]}, `,
-                    )
-                    .join("")
-            } are the winners!`;
-
-      setGameOverMessage(gameOverMessage);
-      setOpenDialog(true);
-    } else {
+    if (!gameOver) {
       setOpenDialog(false);
+      return;
     }
-  }, [gameOver, lobbyPlayers]);
+    const gameOverMessage =
+      winners.length === 1
+        ? `${userNameCacheState[winners[0]]} is the winner!`
+        : `${
+            winners.length === 2
+              ? `${userNameCacheState[winners[0]]} and ${userNameCacheState[winners[1]]}`
+              : winners
+                  .map((w, ind) =>
+                    ind === winners.length - 1
+                      ? `and ${userNameCacheState[w]}`
+                      : `${userNameCacheState[w]}, `,
+                  )
+                  .join("")
+          } are the winners!`;
+
+    setGameOverMessage(gameOverMessage);
+    setOpenDialog(true);
+  }, [gameOver, winners]);
 
   return (
     <Dialog open={openDialog}>
