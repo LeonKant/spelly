@@ -13,7 +13,7 @@ import {
 import {
   LobbySnakeToCamelCase,
   PrevRoundsSnakeToCamelCase,
-} from "@/utils/lobby";
+} from "@/utils/lobby/realtime-to-db";
 import { createClient } from "@/utils/supabase/client";
 import {
   RealtimeChannel,
