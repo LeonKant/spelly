@@ -7,7 +7,6 @@ export type LobbyAudioContextT = {
 };
 
 export type sfxAudioDataKeyT =
-  | "mainLobby"
   | "roundLoss"
   | "correctLetter"
   | "gameLost"

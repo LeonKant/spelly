@@ -3,10 +3,6 @@ import { useRef } from "react";
 
 export const useAudioData = () => {
   const audioData: sfxAudioDataT = {
-    mainLobby: {
-      src: "music/Spelly - Gameplay Loop.mp3",
-      ref: useRef<HTMLAudioElement | null>(null),
-    },
     roundLoss: {
       src: "music/Spelly - Round Loss.mp3",
       ref: useRef<HTMLAudioElement | null>(null),

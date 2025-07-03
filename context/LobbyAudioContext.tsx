@@ -5,6 +5,7 @@ import {
   RefObject,
   useContext,
   useEffect,
+  useRef,
 } from "react";
 import { useAudioSettings } from "./AudioSettingsContext";
 import { useSpellyLobby } from "./LobbyContext";
@@ -27,7 +28,7 @@ export const LobbyAudioProvider = ({ children }: PropsWithChildren) => {
     lobbyState: { gameStarted, gameOver },
   } = useSpellyLobby();
   const { audioData } = useAudioData();
-  const mainLobbyAudioRef = audioData.mainLobby.ref;
+  const mainLobbyAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const playAudioInterupt =
     (audioRef: RefObject<HTMLAudioElement | null>) => () => {
@@ -115,8 +116,14 @@ export const LobbyAudioProvider = ({ children }: PropsWithChildren) => {
       value={{ playRoundLoseAudio, playCorrectLetterAudio, playGameEndMusic }}
     >
       {children}
+      <audio
+        ref={mainLobbyAudioRef}
+        src="music/Spelly - Gameplay Loop.mp3"
+        loop
+      />
+
       {Object.entries(audioData).map(([k, d], i) => (
-        <audio {...d} key={`${k}-${i}`} loop={k === "mainLobby"} />
+        <audio {...d} key={`${k}-${i}`} />
       ))}
     </LobbyAudioContext.Provider>
   );
