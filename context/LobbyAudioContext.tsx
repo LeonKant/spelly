@@ -26,6 +26,8 @@ export const LobbyAudioProvider = ({ children }: PropsWithChildren) => {
   const { mainMusicVolume, sfxVolume, muted } = useAudioSettings();
   const {
     lobbyState: { gameStarted, gameOver },
+    winners,
+    userID,
   } = useSpellyLobby();
   const { audioData } = useAudioData();
   const mainLobbyAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -53,6 +55,7 @@ export const LobbyAudioProvider = ({ children }: PropsWithChildren) => {
       try {
         audioRef.current.play();
       } catch {
+        audioRef.current.onended = null;
         mainLobbyAudioRef.current.play();
       }
     };
@@ -80,36 +83,35 @@ export const LobbyAudioProvider = ({ children }: PropsWithChildren) => {
 
     const audioRef = audioData[wonGame ? "gameWon" : "gameLost"].ref;
     if (!audioRef.current) return;
-    audioRef.current.play();
+    audioRef.current.play().catch(() => console.log(85));
   };
 
+  // handle changes in volume from global audio settings
   useEffect(() => {
     Object.values(audioData).forEach((r) => {
       const { ref } = r;
       if (!!ref.current) ref.current.volume = sfxVolume / 100;
     });
-  }, [sfxVolume]);
+    if (!!mainLobbyAudioRef.current)
+      mainLobbyAudioRef.current.volume = mainMusicVolume / 100;
+  }, [sfxVolume, mainMusicVolume]);
 
+  // handle muting based on global audio settings
   useEffect(() => {
-    if (!mainLobbyAudioRef.current) return;
-    mainLobbyAudioRef.current.volume = mainMusicVolume / 100;
-    mainLobbyAudioRef.current[muted ? "pause" : "play"]();
+    mainLobbyAudioRef.current?.[muted ? "pause" : "play"]();
   }, [mainMusicVolume, muted]);
 
+  // handle transition from gameOver to gameStart
   useEffect(() => {
-    if (!gameOver && gameStarted) {
-      Object.values(audioData).forEach(({ ref }) => {
-        if (ref.current) {
-          ref.current.pause();
-          ref.current.currentTime = 0;
-        }
-      });
+    if (!gameOver && gameStarted && winners.length === 0) {
+      muteSfx();
       if (muted) return;
-      try {
-        mainLobbyAudioRef.current?.play();
-      } catch {}
+      mainLobbyAudioRef.current?.play().catch(() => console.log(109));
     }
-  }, [gameStarted, gameOver]);
+    if (gameOver && gameStarted && winners.length > 0) {
+      playGameEndMusic(winners.includes(userID));
+    }
+  }, [gameStarted, gameOver, winners, muted]);
 
   return (
     <LobbyAudioContext.Provider
