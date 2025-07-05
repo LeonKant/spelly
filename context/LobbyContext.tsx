@@ -13,7 +13,7 @@ import {
 import {
   LobbySnakeToCamelCase,
   PrevRoundsSnakeToCamelCase,
-} from "@/utils/lobby";
+} from "@/utils/lobby/realtime-to-db";
 import { createClient } from "@/utils/supabase/client";
 import {
   RealtimeChannel,
@@ -30,6 +30,7 @@ import {
 } from "react";
 import { redirect } from "next/navigation";
 import { SpellyLobbyPrevRoundT, SpellyLobbyT } from "@/types/db.type";
+import { getWinners } from "@/utils/lobby/game";
 
 const SpellyLobbyContext = createContext<SpellyLobbyContextT | null>(null);
 
@@ -62,6 +63,7 @@ export const SpellyLobbyProvider = ({
   const [prevRoundsState, setPrevRoundsState] = useState<
     SpellyLobbyPrevRoundT[]
   >(serverPrevRoundsState);
+  const [winners, setWinners] = useState<string[]>([]);
 
   const initUserNameCache = Object.entries(serverLobbyPlayers).reduce(
     (prev, [id, value]) => {
@@ -210,6 +212,10 @@ export const SpellyLobbyProvider = ({
     };
   }, []);
 
+  useEffect(() => {
+    setWinners(lobbyState.gameOver ? getWinners(lobbyPlayers) : []);
+  }, [lobbyState.gameOver, lobbyPlayers]);
+
   return (
     <SpellyLobbyContext.Provider
       value={{
@@ -221,6 +227,7 @@ export const SpellyLobbyProvider = ({
         userNameCacheState,
         prevRoundsState,
         isHost: userID === lobbyState.hostId,
+        winners,
       }}
     >
       {children}

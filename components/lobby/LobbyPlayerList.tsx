@@ -22,7 +22,7 @@ export function LobbyPlayerList() {
       collapsible
       defaultValue="player-names"
       title="lobby-players"
-      className="max-w-md w-full"
+      className="w-full max-w-md"
     >
       <AccordionItem value="player-names">
         <AccordionTrigger className="hover:no-underline">

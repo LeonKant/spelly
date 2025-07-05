@@ -13,6 +13,7 @@ import { SpellyLobbyProvider } from "@/context/LobbyContext";
 import { SpellyLobbyT } from "@/types/db.type";
 import { PageTemplate } from "@/components/PageTemplate";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { LobbyAudioProvider } from "@/context/LobbyAudioContext";
 
 const LobbyPage = async () => {
   const supabase = await createClient();
@@ -44,10 +45,12 @@ const LobbyPage = async () => {
         lobbyState={lobbyInfo}
         prevRoundsState={prevRounds}
       >
-        <LobbySidebar />
-        <PageTemplate className="flex-1 items-center">
-          <Lobby />
-        </PageTemplate>
+        <LobbyAudioProvider>
+          <LobbySidebar />
+          <PageTemplate className="flex-1 items-center">
+            <Lobby />
+          </PageTemplate>
+        </LobbyAudioProvider>
       </SpellyLobbyProvider>
     </SidebarProvider>
   );

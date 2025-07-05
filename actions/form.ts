@@ -57,7 +57,7 @@ export const verifyOtpAction = async (data: OTPSchemaT) => {
 
 export const signOutAction = async () => {
   const supabase = await createClient();
-  await supabase.auth.signOut();
+  await supabase.auth.signOut({ scope: "local" });
   return redirect("/sign-in");
 };
 

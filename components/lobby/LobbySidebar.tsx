@@ -14,6 +14,7 @@ import { PrevRoundsList } from "./PrevRoundsList";
 import { useSpellyLobby } from "@/context/LobbyContext";
 import LobbySidebarHeader from "./LobbySidebarHeader";
 import { hostEndGameAction, leaveGameAction } from "@/actions/lobby";
+import { AudioToggle } from "../AudioToggle";
 
 export function LobbySidebar() {
   const {
@@ -38,6 +39,7 @@ export function LobbySidebar() {
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem>
+              <AudioToggle />
               <SidebarMenuButton
                 asChild
                 className="cursor-pointer text-base"

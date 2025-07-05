@@ -1,5 +1,4 @@
 "use server";
-
 import { eq, like, or } from "drizzle-orm";
 import { db } from "../../config/db.config";
 import {
@@ -52,7 +51,9 @@ export async function getLobbyUsernameAndPoints(lobbyId: string) {
   );
 }
 
-export async function getLobbyInfoFromHostId(userId: string):Promise<SpellyLobbyT> {
+export async function getLobbyInfoFromHostId(
+  userId: string,
+): Promise<SpellyLobbyT> {
   return (
     await db
       .select()

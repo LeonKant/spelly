@@ -12,6 +12,7 @@ export type SpellyLobbyContextT = {
   lobbyPlayers: LobbyPlayersT<Partial<LobbyPlayerStatusT>>;
   userNameCacheState: { [key: string]: string };
   subscriptionWaiting: boolean;
+  winners: string[];
 } & BaseSpellyLobbyContextT;
 
 export type SpellyLobbyContextPropsT = {

@@ -1,5 +1,4 @@
 "use client";
-
 import { useSpellyLobby } from "@/context/LobbyContext";
 import {
   Collapsible,
@@ -47,7 +46,7 @@ export default function LobbySidebarHeader() {
 
       <Collapsible defaultOpen={true} className="group/collapsible">
         <CollapsibleTrigger className="w-full">
-          <SidebarGroupLabel className="group/label flex flex-1 justify-between text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+          <SidebarGroupLabel className="group/label hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex flex-1 justify-between text-sm">
             Lobby Info
             <ChevronRight className="transition-transform group-data-[state=open]/collapsible:rotate-90" />
           </SidebarGroupLabel>

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -10,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AccountSettingsForm } from "../forms/AccountSettingsForm";
 import { deleteAccountAction } from "@/actions/form";
 import { displayErrorToast } from "@/utils/client";
+import { AudioSettingsForm } from "../forms/AudioSettingsForm";
 
 interface Props {
   username: string;
@@ -25,6 +27,7 @@ export function SettingsTabs({ username }: Props) {
     <Tabs defaultValue="account">
       <TabsList className={"w-full"}>
         <TabsTrigger value="account">Account</TabsTrigger>
+        <TabsTrigger value="audio">Audio</TabsTrigger>
       </TabsList>
       <TabsContent value="account" className="flex flex-col gap-4">
         <AccountSettingsForm username={username} />
@@ -41,6 +44,17 @@ export function SettingsTabs({ username }: Props) {
               Delete your account
             </Button>
           </CardFooter>
+        </Card>
+      </TabsContent>
+      <TabsContent value="audio" className="flex flex-col gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Audio</CardTitle>
+            <CardDescription>Adjust volume or turn off audio</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AudioSettingsForm />
+          </CardContent>
         </Card>
       </TabsContent>
     </Tabs>

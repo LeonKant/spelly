@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { CLIENT } from "@/config/var.config";
 import DefaultLayout from "@/components/DefaultLayout";
+import { AudioSettingsProvider } from "@/context/AudioSettingsContext";
 
 export const metadata = {
   metadataBase: new URL(CLIENT.projectURL),
@@ -25,7 +26,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <DefaultLayout>{children}</DefaultLayout>
+          <AudioSettingsProvider>
+            <DefaultLayout>{children}</DefaultLayout>
+          </AudioSettingsProvider>
         </ThemeProvider>
         <Toaster />
       </body>
