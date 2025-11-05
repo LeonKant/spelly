@@ -37,11 +37,11 @@ export function AudioSettingsForm() {
   }, [mainMusicVolume, sfxVolume]);
 
   const onSubmit = (data: AudioSettingsSchemaT) => {
-    const { mainMusicVolume, sfxVolume } = data;
-    localStorage.setItem("mainMusicVolume", mainMusicVolume.toString());
-    localStorage.setItem("sfxVolume", sfxVolume.toString());
-    setMainMusicVolume(mainMusicVolume);
-    setSfxVolume(sfxVolume);
+    // const { mainMusicVolume, sfxVolume } = data;
+    localStorage.setItem("mainMusicVolume", data.mainMusicVolume.toString());
+    localStorage.setItem("sfxVolume", data.sfxVolume.toString());
+    setMainMusicVolume(data.mainMusicVolume);
+    setSfxVolume(data.sfxVolume);
   };
 
   const settingsSameAsDefault =
