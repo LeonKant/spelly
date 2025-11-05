@@ -23,6 +23,10 @@ export function AudioSettingsForm() {
   const { mainMusicVolume, sfxVolume, setMainMusicVolume, setSfxVolume } =
     useAudioSettings();
 
+  const invalidDevice =
+    navigator.userAgent.includes("iPhone") ||
+    navigator.userAgent.includes("iPad");
+
   const formReturn = useForm<AudioSettingsSchemaT>({
     resolver: zodResolver(AudioSettingsSchema.required()),
     mode: "onChange",
@@ -37,7 +41,8 @@ export function AudioSettingsForm() {
   }, [mainMusicVolume, sfxVolume]);
 
   const onSubmit = (data: AudioSettingsSchemaT) => {
-    // const { mainMusicVolume, sfxVolume } = data;
+    if (invalidDevice) return;
+
     localStorage.setItem("mainMusicVolume", data.mainMusicVolume.toString());
     localStorage.setItem("sfxVolume", data.sfxVolume.toString());
     setMainMusicVolume(data.mainMusicVolume);
@@ -60,6 +65,7 @@ export function AudioSettingsForm() {
               {formReturn.watch().mainMusicVolume}
               <FormControl>
                 <Slider
+                  disabled={invalidDevice}
                   onValueChange={(v) => {
                     field.onChange(v[0]);
                   }}
@@ -79,6 +85,7 @@ export function AudioSettingsForm() {
               {formReturn.watch().sfxVolume}
               <FormControl>
                 <Slider
+                  disabled={invalidDevice}
                   onValueChange={(v) => {
                     field.onChange(v[0]);
                   }}
@@ -89,10 +96,15 @@ export function AudioSettingsForm() {
             </FormItem>
           )}
         />
+        {invalidDevice && (
+          <div className="text-destructive text-sm">
+            Your device does not support modifying volume.
+          </div>
+        )}
         <div>
           <AudioToggle />
         </div>
-        <Button type="submit" disabled={settingsSameAsDefault}>
+        <Button type="submit" disabled={settingsSameAsDefault || invalidDevice}>
           Save
         </Button>
       </form>
