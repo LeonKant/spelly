@@ -1,5 +1,4 @@
 "use client";
-
 import { playerTurnSubmitAction, startGameAction } from "@/actions/lobby";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +8,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { useLobbyAudio } from "@/context/LobbyAudioContext";
 import { useSpellyLobby } from "@/context/LobbyContext";
 import { gameLobbySchema } from "@/lib/form-schemas/GameLobbyScema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,6 +29,8 @@ export default function GameLobbyForm() {
     },
   } = useSpellyLobby();
 
+  const { playRoundLoseAudio, playCorrectLetterAudio } = useLobbyAudio();
+
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [startingGame, setStartingGame] = useState<boolean>(false);
 
@@ -47,8 +49,16 @@ export default function GameLobbyForm() {
   const handlePlayerTurnSubmit = async (
     values: z.infer<typeof gameLobbySchema>,
   ) => {
-    const { error } = await playerTurnSubmitAction(values);
+    const { error, lostRound, gameOver } = await playerTurnSubmitAction(values);
     gameLobbyFormReturn.resetField("gameInput");
+
+    if (error || !!gameOver) return;
+
+    if (!!lostRound) {
+      playRoundLoseAudio();
+    } else {
+      playCorrectLetterAudio();
+    }
   };
 
   useEffect(() => {

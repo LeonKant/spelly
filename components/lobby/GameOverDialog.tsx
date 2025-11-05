@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Dialog,
   DialogContent,
@@ -9,7 +8,6 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-
 import { useSpellyLobby } from "@/context/LobbyContext";
 import { useEffect, useState } from "react";
 import {
@@ -17,6 +15,7 @@ import {
   hostResetGameAction,
   leaveGameAction,
 } from "@/actions/lobby";
+import { useLobbyAudio } from "@/context/LobbyAudioContext";
 
 export function GameOverDialog() {
   const [gameOverMessage, setGameOverMessage] = useState<string | null>(null);
@@ -26,44 +25,33 @@ export function GameOverDialog() {
     lobbyPlayers,
     userNameCacheState,
     isHost,
+    userID,
+    winners,
   } = useSpellyLobby();
 
   useEffect(() => {
-    if (gameOver) {
-      const winners: string[] = [];
-
-      const minPoints: number = Math.min(
-        ...Object.entries(lobbyPlayers).map(
-          ([_, player]) => player?.points ?? 27,
-        ),
-      );
-      Object.entries(lobbyPlayers).forEach(([id, player]) => {
-        if (player.points === minPoints) {
-          winners.push(id);
-        }
-      });
-
-      const gameOverMessage =
-        winners.length === 1
-          ? `${userNameCacheState[winners[0]]} is the winner!`
-          : `${
-              winners.length === 2
-                ? `${userNameCacheState[winners[0]]} and ${userNameCacheState[winners[1]]}`
-                : winners
-                    .map((w, ind) =>
-                      ind === winners.length - 1
-                        ? `and ${userNameCacheState[w]}`
-                        : `${userNameCacheState[w]}, `,
-                    )
-                    .join("")
-            } are the winners!`;
-
-      setGameOverMessage(gameOverMessage);
-      setOpenDialog(true);
-    } else {
+    if (!gameOver) {
       setOpenDialog(false);
+      return;
     }
-  }, [gameOver]);
+    const gameOverMessage =
+      winners.length === 1
+        ? `${userNameCacheState[winners[0]]} is the winner!`
+        : `${
+            winners.length === 2
+              ? `${userNameCacheState[winners[0]]} and ${userNameCacheState[winners[1]]}`
+              : winners
+                  .map((w, ind) =>
+                    ind === winners.length - 1
+                      ? `and ${userNameCacheState[w]}`
+                      : `${userNameCacheState[w]}, `,
+                  )
+                  .join("")
+          } are the winners!`;
+
+    setGameOverMessage(gameOverMessage);
+    setOpenDialog(true);
+  }, [gameOver, winners]);
 
   return (
     <Dialog open={openDialog}>

@@ -1,5 +1,4 @@
 "use server";
-
 import { SpellyLobbyPrevRoundInsertT } from "@/types/db.type";
 import { db } from "../../config/db.config";
 import {
@@ -13,7 +12,7 @@ export async function initLobby(lobbyName: string, userID: string) {
   await db.insert(lobbiesInSpelly).values({
     name: lobbyName,
     hostId: userID,
-  })
+  });
 }
 
 // add player to lobby_players table

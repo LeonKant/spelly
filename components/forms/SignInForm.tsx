@@ -1,5 +1,4 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -54,10 +53,10 @@ const SignInForm = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <h1 className="text-2xl font-medium">Sign in</h1>
-            <p className="text text-sm text-foreground">
+            <p className="text text-foreground text-sm">
               Don't have an account?{" "}
               <Link
-                className="font-medium text-primary underline"
+                className="text-primary font-medium underline"
                 href="/sign-up"
               >
                 Sign up

@@ -1,6 +1,4 @@
 "use client";
-
-import { signUpAction } from "@/actions/form";
 import { SubmitButton } from "../submit-button";
 import { Input } from "../ui/input";
 import { useState } from "react";
