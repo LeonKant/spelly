@@ -88,12 +88,21 @@ export const LobbyAudioProvider = ({ children }: PropsWithChildren) => {
 
   // handle changes in volume from global audio settings
   useEffect(() => {
+    console.log("lobby volume change useEffect triggered");
     Object.values(audioData).forEach((r) => {
       const { ref } = r;
-      if (!!ref.current) ref.current.volume = sfxVolume / 100;
+      if (!!ref.current) {
+        ref.current.volume = sfxVolume / 100;
+        console.log(`${r.src}:`, ref.current.volume);
+      }
     });
-    if (!!mainLobbyAudioRef.current)
+    if (!!mainLobbyAudioRef.current) {
       mainLobbyAudioRef.current.volume = mainMusicVolume / 100;
+      console.log(
+        "mainLobbyAudioRef.current.volume:",
+        mainLobbyAudioRef.current.volume,
+      );
+    }
   }, [sfxVolume, mainMusicVolume]);
 
   // handle muting based on global audio settings

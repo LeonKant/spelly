@@ -25,6 +25,9 @@ export const AudioSettingsProvider = ({ children }: PropsWithChildren) => {
   const [sfxVolume, setSfxVolume] = useState<number>(50);
   const [muted, setMuted] = useState<boolean>(true);
 
+  console.log("mainMusicVolume:", mainMusicVolume);
+  console.log("sfxVolume:", sfxVolume);
+
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
