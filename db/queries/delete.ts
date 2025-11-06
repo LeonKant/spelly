@@ -6,6 +6,7 @@ import {
   lobbyPlayersInSpelly,
   lobbyPrevRoundsInSpelly,
 } from "../schema/spelly";
+import { dbTransaction } from "@/types/db.type";
 
 export async function deleteLobby(lobbyID: string): Promise<void> {
   await db.delete(lobbiesInSpelly).where(eq(lobbiesInSpelly.id, lobbyID));
@@ -22,8 +23,8 @@ export async function deletePlayerFromLobby(userID: string, lobbyID: string) {
     );
 }
 
-export async function deletePrevRounds(lobbyID: string) {
-  await db
+export async function deletePrevRounds(lobbyID: string, tx?: dbTransaction) {
+  await (tx ?? db)
     .delete(lobbyPrevRoundsInSpelly)
     .where(eq(lobbyPrevRoundsInSpelly.lobbyId, lobbyID));
 }

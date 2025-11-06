@@ -7,6 +7,11 @@ import {
   SpellyLobbyRealtimePayloadT,
   SpellyPrevRoundRealtimePayloadT,
 } from "./realtime.type";
+import { db } from "@/config/db.config";
+
+export type dbTransaction = Parameters<
+  Parameters<typeof db.transaction>[0]
+>[0];
 
 export type SpellyProfileT = typeof profilesInSpelly.$inferSelect;
 
@@ -31,6 +36,11 @@ export const SpellyLobbySnakeToCamelCaseKeys: Record<
 export type SpellyLobbyPrevRoundT = typeof lobbyPrevRoundsInSpelly.$inferSelect;
 export type SpellyLobbyPrevRoundInsertT =
   typeof lobbyPrevRoundsInSpelly.$inferInsert;
+
+export type AddToPrevRoundsT = Omit<
+    SpellyLobbyPrevRoundInsertT,
+    "id" | "timeAdded" | "loserUserName"
+  >
 
 export const SpellyPrevRoundsSnakeToCamelCaseKeys: Record<
   keyof SpellyPrevRoundRealtimePayloadT,
