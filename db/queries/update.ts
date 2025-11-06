@@ -6,20 +6,25 @@ import {
   lobbyPlayersInSpelly,
   profilesInSpelly,
 } from "../schema/spelly";
-import { LobbyInfoUpdateT } from "@/types/db.type";
+import { dbTransaction, LobbyInfoUpdateT } from "@/types/db.type";
 
 export async function updateLobbyState(
   lobbyId: string,
   lobbyInfo: LobbyInfoUpdateT,
+  tx?: dbTransaction,
 ) {
-  await db
+  await (tx ?? db)
     .update(lobbiesInSpelly)
     .set({ ...lobbyInfo, lastActivity: sql`CURRENT_TIMESTAMP` })
     .where(eq(lobbiesInSpelly.id, lobbyId));
 }
 
-export async function incrementPlayerPoints(userId: string, lobbyId: string) {
-  await db
+export async function incrementPlayerPoints(
+  userId: string,
+  lobbyId: string,
+  tx?: dbTransaction,
+) {
+  await (tx ?? db)
     .update(lobbyPlayersInSpelly)
     .set({
       points: sql`${lobbyPlayersInSpelly.points} + 1`,
@@ -32,8 +37,11 @@ export async function incrementPlayerPoints(userId: string, lobbyId: string) {
     );
 }
 
-export async function resetLobbyPlayerPoints(lobbyId: string) {
-  await db
+export async function resetLobbyPlayerPoints(
+  lobbyId: string,
+  tx?: dbTransaction,
+) {
+  await (tx ?? db)
     .update(lobbyPlayersInSpelly)
     .set({
       points: 0,

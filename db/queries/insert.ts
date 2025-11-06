@@ -1,5 +1,8 @@
 "use server";
-import { SpellyLobbyPrevRoundInsertT } from "@/types/db.type";
+import {
+  AddToPrevRoundsT,
+  dbTransaction,
+} from "@/types/db.type";
 import { db } from "../../config/db.config";
 import {
   lobbiesInSpelly,
@@ -26,12 +29,12 @@ export async function addUserToLobby(lobbyID: string, userID: string) {
 // insert to lobby_prev_rounds table
 export async function addToPrevRounds(
   userId: string,
-  values: Omit<
-    SpellyLobbyPrevRoundInsertT,
-    "id" | "timeAdded" | "loserUserName"
-  >,
+  values: AddToPrevRoundsT,
+  tx?: dbTransaction,
 ) {
   const loserUserName = (await getUserName(userId)) ?? "";
 
-  await db.insert(lobbyPrevRoundsInSpelly).values({ ...values, loserUserName });
+  await (tx ?? db)
+    .insert(lobbyPrevRoundsInSpelly)
+    .values({ ...values, loserUserName });
 }
